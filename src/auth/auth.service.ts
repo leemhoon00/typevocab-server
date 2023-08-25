@@ -1,22 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async kakaoLogin(id: string) {
-    const user = await this.userService.findUser(id);
+  async kakaoLogin(id: string, res: Response) {
+    let user = await this.userService.findUser(id);
     if (!user) {
-      const user = this.userService.create({
+      user = await this.userService.create({
         id,
         provider: 'kakao',
       });
       console.log('생성');
-      return user;
-    } else {
-      console.log('이미있음');
-      return user;
     }
+    const payload = { id: user.id };
+    const token = this.jwtService.sign(payload);
+    res.cookie('jwt', token, { httpOnly: true });
+    return user;
   }
 }

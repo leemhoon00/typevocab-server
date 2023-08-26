@@ -9,7 +9,7 @@ export class AuthController {
 
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
-  kakaoRedirect(@Req() req, @Res() res: Response) {
-    return this.authService.kakaoLogin(req.user.id, res);
+  async kakaoRedirect(@Req() req, @Res() res: Response) {
+    return await this.authService.kakaoLogin(req.user.id, res);
   }
 }

@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async kakaoLogin(id: string, res: Response) {
@@ -22,6 +24,6 @@ export class AuthService {
     const payload = { id: user.id };
     const token = this.jwtService.sign(payload);
     res.cookie('jwt', token, { httpOnly: true });
-    return user;
+    res.redirect(this.configService.get('CLIENT_URL'));
   }
 }

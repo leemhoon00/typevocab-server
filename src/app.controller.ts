@@ -8,7 +8,7 @@ export class AppController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  getProfile() {
+  get() {
     return 'JWT 인증 성공';
   }
 }

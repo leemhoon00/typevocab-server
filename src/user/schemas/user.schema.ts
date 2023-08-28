@@ -12,7 +12,19 @@ export class User {
   provider: string;
 
   @Prop()
+  username: string;
+
+  @Prop()
   email: string;
+
+  @Prop()
+  bio: string;
+
+  @Prop()
+  company: string;
+
+  @Prop()
+  image: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

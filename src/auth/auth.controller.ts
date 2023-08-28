@@ -1,16 +1,12 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { JwtAuthGuard } from './jwt-auth.guard';
+// import { JwtAuthGuard } from './jwt-auth.guard';
 import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
@@ -18,8 +14,8 @@ export class AuthController {
     return this.authService.kakaoLogin(req.user.id, res);
   }
 
+  // @UseGuards(JwtAuthGuard)
   @Get('logout')
-  @UseGuards(JwtAuthGuard)
   logout(@Res() res: Response) {
     return this.authService.logout(res);
   }

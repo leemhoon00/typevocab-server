@@ -13,7 +13,26 @@ export class UserService {
     return createdUser.save();
   }
 
-  async findUser(id: string): Promise<User> {
-    return this.userModel.findOne({ id: id });
+  async findUser(userId: string): Promise<User> {
+    return this.userModel.findOne({ id: userId });
+  }
+
+  async getUser(userId: string): Promise<User> {
+    return this.userModel.findOne(
+      { id: userId },
+      { _id: false, __v: false, id: false, provider: false },
+    );
+  }
+
+  async updateUser(req) {
+    const result = await this.userModel.updateOne(
+      { id: req.user.userId },
+      { $set: { ...req.body } },
+    );
+    if (result.modifiedCount === 0) {
+      return { success: false };
+    } else {
+      return { success: true };
+    }
   }
 }

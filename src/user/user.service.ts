@@ -3,10 +3,15 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/user.dto';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    private readonly configService: ConfigService,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = new this.userModel(createUserDto);
@@ -24,7 +29,7 @@ export class UserService {
     );
   }
 
-  async updateUser(req) {
+  async updateUser(req: any) {
     const result = await this.userModel.updateOne(
       { id: req.user.userId },
       { $set: { ...req.body } },
@@ -33,6 +38,17 @@ export class UserService {
       return { success: false };
     } else {
       return { success: true };
+    }
+  }
+
+  async deleteUser(userId: string, res: Response) {
+    const result = await this.userModel.deleteOne({ id: userId });
+    if (result.deletedCount === 0) {
+      return { success: false };
+    } else {
+      res.clearCookie('jwt');
+      res.clearCookie('isLoggedIn');
+      res.json({ success: true });
     }
   }
 }

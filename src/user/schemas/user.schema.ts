@@ -11,19 +11,19 @@ export class User {
   @Prop()
   provider: string;
 
-  @Prop()
-  username: string;
+  @Prop({ default: '' })
+  name: string;
 
-  @Prop()
+  @Prop({ default: '' })
   email: string;
 
-  @Prop()
+  @Prop({ default: '' })
   bio: string;
 
-  @Prop()
+  @Prop({ default: '' })
   company: string;
 
-  @Prop()
+  @Prop({ default: 'https://img.leemhoon00.com/default-image.png' })
   image: string;
 }
 

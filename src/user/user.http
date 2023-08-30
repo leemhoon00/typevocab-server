@@ -1,0 +1,19 @@
+@endpoint = http://localhost:3000
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI5ODQxOTA3MTQiLCJpYXQiOjE2OTMzOTk2NzYsImV4cCI6MTY5MzQ4NjA3Nn0.PRui8kDWTOA46wq8lS8L7cV3XDmZ_OF-cHyOdRWAHjw
+
+# GET /user
+GET {{endpoint}}/user
+Cookie: jwt={{jwt}}
+
+### 사진 업로드
+# POST /photo
+POST {{endpoint}}/user/image
+Cookie: jwt={{jwt}}
+Content-Type: multipart/form-data; boundary=image-file-upload
+
+--image-file-upload
+Content-Disposition: form-data; name="file"; filename="nodejs.png"
+Content-Type: image/png
+
+< ./nodejs.png
+--image-file-upload--

@@ -51,4 +51,10 @@ export class UserService {
       res.json({ success: true });
     }
   }
+
+  async uploadProfileImage(userId: string, file: Express.Multer.File) {
+    console.log(userId);
+    console.log(file);
+    return { message: 'temp' };
+  }
 }

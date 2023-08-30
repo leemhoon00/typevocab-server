@@ -19,7 +19,6 @@ export class AuthService {
         id,
         provider: 'kakao',
       });
-      console.log('생성');
     }
     const payload = { id: user.id };
     const token = this.jwtService.sign(payload);

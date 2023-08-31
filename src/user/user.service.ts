@@ -11,19 +11,21 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { extname } from 'path';
-// import {
-//   CloudFrontClient,
-//   CreateInvalidationCommand,
-// } from '@aws-sdk/client-cloudfront';
+import {
+  CloudFrontClient,
+  CreateInvalidationCommand,
+} from '@aws-sdk/client-cloudfront';
 
 @Injectable()
 export class UserService {
   s3Client: any;
+  cfClient: any;
   constructor(
     private readonly configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {
     this.s3Client = new S3Client({});
+    this.cfClient = new CloudFrontClient({});
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -66,13 +68,14 @@ export class UserService {
   }
 
   async uploadProfileImage(userId: string, file: Express.Multer.File) {
-    const command = new PutObjectCommand({
-      Bucket: this.configService.get('BUCKET_NAME'),
-      Key: String('images/' + userId + extname(file.originalname)),
-      Body: file.buffer,
-    });
     try {
-      await this.s3Client.send(command);
+      // S3 upload
+      const s3Command = new PutObjectCommand({
+        Bucket: this.configService.get('BUCKET_NAME'),
+        Key: String('images/' + userId + extname(file.originalname)),
+        Body: file.buffer,
+      });
+      await this.s3Client.send(s3Command);
       const filename = String(userId + extname(file.originalname));
       const imageUrl = `${this.configService.get(
         'CLOUDFRONT_URL',
@@ -82,27 +85,18 @@ export class UserService {
         { $set: { image: imageUrl } },
       );
 
-      // const client = new CloudFrontClient({
-      //   region: 'ap-northeast-2',
-      //   credentials: {
-      //     accessKeyId: this.configService.get('AWS_ACCESS_KEY'),
-      //     secretAccessKey: this.configService.get('AWS_SECRET_KEY'),
-      //   },
-      // });
-      // const params2 = {
-      //   DistributionId: 'E2NOA1SL2ZI7OD',
-      //   InvalidationBatch: {
-      //     CallerReference: String(new Date().getTime()),
-      //     Paths: {
-      //       Quantity: 1,
-      //       Items: [filename],
-      //     },
-      //   },
-      // };
-      // const createInvalidationCommand = new CreateInvalidationCommand(params2);
-      // const response2 = await client.send(createInvalidationCommand);
-      // console.log('Posted cloudfront invalidation, response is:');
-      // console.log(response2);
+      // CloudFront invalidation
+      const cfCommand = new CreateInvalidationCommand({
+        DistributionId: this.configService.get('CLOUDFRONT_ID'),
+        InvalidationBatch: {
+          CallerReference: String(new Date().getTime()),
+          Paths: {
+            Quantity: 1,
+            Items: [String('/' + filename)],
+          },
+        },
+      });
+      await this.cfClient.send(cfCommand);
 
       return { success: true, image: imageUrl };
     } catch (err) {

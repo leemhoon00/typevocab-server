@@ -46,4 +46,10 @@ export class UserController {
   ) {
     return this.userService.uploadProfileImage(req.user.userId, file);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('image')
+  deleteProfileImage(@Req() req: Request) {
+    return this.userService.deleteProfileImage(req.user.userId);
+  }
 }

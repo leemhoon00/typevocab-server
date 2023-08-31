@@ -6,7 +6,7 @@ GET {{endpoint}}/user
 Cookie: jwt={{jwt}}
 
 ### 사진 업로드
-# POST /photo
+# POST /user/image
 POST {{endpoint}}/user/image
 Cookie: jwt={{jwt}}
 Content-Type: multipart/form-data; boundary=image-file-upload
@@ -17,3 +17,8 @@ Content-Type: image/png
 
 < ../../temp/nodejs.png
 --image-file-upload--
+
+### 사진 삭제
+# DELETE /user/image
+DELETE {{endpoint}}/user/image
+Cookie: jwt={{jwt}}

@@ -10,13 +10,11 @@ import { extname } from 'path';
 
 @Injectable()
 export class UserService {
-  BUCKET_NAME: string;
   s3: any;
   constructor(
     private readonly configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {
-    this.BUCKET_NAME = configService.get('BUCKET_NAME');
     this.s3 = new AWS.S3({
       accessKeyId: configService.get('AWS_ACCESS_KEY'),
       secretAccessKey: configService.get('AWS_SECRET_KEY'),
@@ -64,7 +62,7 @@ export class UserService {
 
   async uploadProfileImage(userId: string, file: Express.Multer.File) {
     const params = {
-      Bucket: this.BUCKET_NAME,
+      Bucket: this.configService.get('BUCKET_NAME'),
       Key: String('images/' + userId + extname(file.originalname)),
       Body: file.buffer,
     };
@@ -79,6 +77,25 @@ export class UserService {
         { $set: { image: imageUrl } },
       );
       return { success: true, image: imageUrl };
+    } catch (err) {
+      console.log(err);
+      return { success: false };
+    }
+  }
+
+  async deleteProfileImage(userId: string) {
+    try {
+      const user = await this.userModel.findOne({ id: userId });
+      const params = {
+        Bucket: this.configService.get('BUCKET_NAME'),
+        Key: String('images/' + userId + extname(user.image)),
+      };
+      await this.s3.deleteObject(params).promise();
+      await this.userModel.updateOne({
+        id: userId,
+        image: `${this.configService.get('DEFAULT_IMAGE')}`,
+      });
+      return { success: true };
     } catch (err) {
       console.log(err);
       return { success: false };

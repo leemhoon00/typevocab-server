@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/user.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class UserService {
     );
   }
 
-  async updateUser(req: any) {
+  async updateUser(req: Request) {
     const result = await this.userModel.updateOne(
       { id: req.user.userId },
       { $set: { ...req.body } },

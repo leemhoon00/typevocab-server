@@ -11,10 +11,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOption } from '../common/utils/multer.options';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { multerOption } from 'src/common/utils/multer.options';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserService } from './user.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -22,19 +22,19 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  get(@Req() req) {
+  get(@Req() req: Request) {
     return this.userService.getUser(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put()
-  update(@Req() req) {
+  update(@Req() req: Request) {
     return this.userService.updateUser(req);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete()
-  delete(@Req() req, @Res() res: Response) {
+  delete(@Req() req: Request, @Res() res: Response) {
     return this.userService.deleteUser(req.user.userId, res);
   }
 

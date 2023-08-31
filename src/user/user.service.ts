@@ -5,20 +5,25 @@ import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/user.dto';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import * as AWS from 'aws-sdk';
+import {
+  PutObjectCommand,
+  DeleteObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { extname } from 'path';
+// import {
+//   CloudFrontClient,
+//   CreateInvalidationCommand,
+// } from '@aws-sdk/client-cloudfront';
 
 @Injectable()
 export class UserService {
-  s3: any;
+  s3Client: any;
   constructor(
     private readonly configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {
-    this.s3 = new AWS.S3({
-      accessKeyId: configService.get('AWS_ACCESS_KEY'),
-      secretAccessKey: configService.get('AWS_SECRET_KEY'),
-    });
+    this.s3Client = new S3Client({});
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -61,14 +66,14 @@ export class UserService {
   }
 
   async uploadProfileImage(userId: string, file: Express.Multer.File) {
-    const params = {
+    const command = new PutObjectCommand({
       Bucket: this.configService.get('BUCKET_NAME'),
       Key: String('images/' + userId + extname(file.originalname)),
       Body: file.buffer,
-    };
+    });
     try {
-      const response = await this.s3.upload(params).promise();
-      const filename = response.Key.split('/')[1];
+      await this.s3Client.send(command);
+      const filename = String(userId + extname(file.originalname));
       const imageUrl = `${this.configService.get(
         'CLOUDFRONT_URL',
       )}/${filename}`;
@@ -76,6 +81,29 @@ export class UserService {
         { id: userId },
         { $set: { image: imageUrl } },
       );
+
+      // const client = new CloudFrontClient({
+      //   region: 'ap-northeast-2',
+      //   credentials: {
+      //     accessKeyId: this.configService.get('AWS_ACCESS_KEY'),
+      //     secretAccessKey: this.configService.get('AWS_SECRET_KEY'),
+      //   },
+      // });
+      // const params2 = {
+      //   DistributionId: 'E2NOA1SL2ZI7OD',
+      //   InvalidationBatch: {
+      //     CallerReference: String(new Date().getTime()),
+      //     Paths: {
+      //       Quantity: 1,
+      //       Items: [filename],
+      //     },
+      //   },
+      // };
+      // const createInvalidationCommand = new CreateInvalidationCommand(params2);
+      // const response2 = await client.send(createInvalidationCommand);
+      // console.log('Posted cloudfront invalidation, response is:');
+      // console.log(response2);
+
       return { success: true, image: imageUrl };
     } catch (err) {
       console.log(err);
@@ -86,11 +114,11 @@ export class UserService {
   async deleteProfileImage(userId: string) {
     try {
       const user = await this.userModel.findOne({ id: userId });
-      const params = {
+      const command = new DeleteObjectCommand({
         Bucket: this.configService.get('BUCKET_NAME'),
         Key: String('images/' + userId + extname(user.image)),
-      };
-      await this.s3.deleteObject(params).promise();
+      });
+      await this.s3Client.send(command);
       await this.userModel.updateOne({
         id: userId,
         image: `${this.configService.get('DEFAULT_IMAGE')}`,

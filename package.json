@@ -27,6 +27,7 @@
     "@nestjs/mongoose": "^10.0.1",
     "@nestjs/passport": "^10.0.1",
     "@nestjs/platform-express": "^10.0.0",
+    "aws-sdk": "^2.1448.0",
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "mongoose": "^7.4.4",

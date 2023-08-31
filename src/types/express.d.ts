@@ -6,6 +6,5 @@ declare module 'express' {
       id?: string;
       userId: string;
     };
-    // 추가적인 사용자 관련 정보를 필요한 만큼 확장할 수 있습니다.
   }
 }

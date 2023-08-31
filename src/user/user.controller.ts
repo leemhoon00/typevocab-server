@@ -11,7 +11,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOption } from 'src/common/utils/multer.options';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserService } from './user.service';
 import { Request, Response } from 'express';
@@ -40,8 +39,11 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post('image')
-  @UseInterceptors(FileInterceptor('file', multerOption))
-  uploadProfileImage(@Req() req, @UploadedFile() file: Express.Multer.File) {
+  @UseInterceptors(FileInterceptor('file'))
+  uploadProfileImage(
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     return this.userService.uploadProfileImage(req.user.userId, file);
   }
 }

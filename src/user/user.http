@@ -1,5 +1,5 @@
 @endpoint = http://localhost:3000
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI5ODQxOTA3MTQiLCJpYXQiOjE2OTMzOTk2NzYsImV4cCI6MTY5MzQ4NjA3Nn0.PRui8kDWTOA46wq8lS8L7cV3XDmZ_OF-cHyOdRWAHjw
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI5ODQxOTA3MTQiLCJpYXQiOjE2OTM0NzcxODUsImV4cCI6MTY5MzU2MzU4NX0.RFobchsoWPs2QAVh04jzDcmxO0-ZJea6fzmJd3jIBEg
 
 # GET /user
 GET {{endpoint}}/user
@@ -15,5 +15,5 @@ Content-Type: multipart/form-data; boundary=image-file-upload
 Content-Disposition: form-data; name="file"; filename="nodejs.png"
 Content-Type: image/png
 
-< ./nodejs.png
+< ../../temp/nodejs.png
 --image-file-upload--

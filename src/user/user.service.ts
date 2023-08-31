@@ -5,13 +5,23 @@ import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/user.dto';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import * as AWS from 'aws-sdk';
+import { extname } from 'path';
 
 @Injectable()
 export class UserService {
+  BUCKET_NAME: string;
+  s3: any;
   constructor(
     private readonly configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
-  ) {}
+  ) {
+    this.BUCKET_NAME = configService.get('BUCKET_NAME');
+    this.s3 = new AWS.S3({
+      accessKeyId: configService.get('AWS_ACCESS_KEY'),
+      secretAccessKey: configService.get('AWS_SECRET_KEY'),
+    });
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = new this.userModel(createUserDto);
@@ -53,8 +63,25 @@ export class UserService {
   }
 
   async uploadProfileImage(userId: string, file: Express.Multer.File) {
-    console.log(userId);
-    console.log(file);
-    return { message: 'temp' };
+    const params = {
+      Bucket: this.BUCKET_NAME,
+      Key: String('images/' + userId + extname(file.originalname)),
+      Body: file.buffer,
+    };
+    try {
+      const response = await this.s3.upload(params).promise();
+      const filename = response.Key.split('/')[1];
+      const imageUrl = `${this.configService.get(
+        'CLOUDFRONT_URL',
+      )}/${filename}`;
+      await this.userModel.updateOne(
+        { id: userId },
+        { $set: { image: imageUrl } },
+      );
+      return { success: true, image: imageUrl };
+    } catch (err) {
+      console.log(err);
+      return { success: false };
+    }
   }
 }

@@ -42,6 +42,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   uploadProfileImage(
     @Req() req: Request,
+    @Res() res: Response,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.userService.uploadProfileImage(req.user.userId, file);

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
@@ -50,20 +50,20 @@ export class UserService {
       { $set: { ...req.body } },
     );
     if (result.modifiedCount === 0) {
-      return { success: false };
+      return;
     } else {
-      return { success: true };
+      throw new HttpException('Forbidden', 403);
     }
   }
 
   async deleteUser(userId: string, res: Response) {
     const result = await this.userModel.deleteOne({ id: userId });
     if (result.deletedCount === 0) {
-      return { success: false };
+      throw new HttpException('Forbidden', 403);
     } else {
       res.clearCookie('jwt');
       res.clearCookie('isLoggedIn');
-      res.json({ success: true });
+      return res.send();
     }
   }
 
@@ -98,10 +98,10 @@ export class UserService {
       });
       await this.cfClient.send(cfCommand);
 
-      return { success: true, image: imageUrl };
+      return { image: imageUrl };
     } catch (err) {
       console.log(err);
-      return { success: false };
+      throw new HttpException('Forbidden', 403);
     }
   }
 
@@ -117,10 +117,10 @@ export class UserService {
         id: userId,
         image: `${this.configService.get('DEFAULT_IMAGE')}`,
       });
-      return { success: true };
+      return;
     } catch (err) {
       console.log(err);
-      return { success: false };
+      throw new HttpException('Forbidden', 403);
     }
   }
 }

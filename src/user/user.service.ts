@@ -49,7 +49,7 @@ export class UserService {
       { id: req.user.userId },
       { $set: { ...req.body } },
     );
-    if (result.modifiedCount === 0) {
+    if (result.modifiedCount !== 0) {
       return;
     } else {
       throw new HttpException('Forbidden', 403);
@@ -57,6 +57,10 @@ export class UserService {
   }
 
   async deleteUser(userId: string, res: Response) {
+    const user = await this.userModel.findOne({ id: userId });
+    if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
+      await this.deleteS3Image(userId);
+    }
     const result = await this.userModel.deleteOne({ id: userId });
     if (result.deletedCount === 0) {
       throw new HttpException('Forbidden', 403);
@@ -69,6 +73,10 @@ export class UserService {
 
   async uploadProfileImage(userId: string, file: Express.Multer.File) {
     try {
+      const user = await this.getUser(userId);
+      if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
+        await this.deleteS3Image(userId);
+      }
       // S3 upload
       const s3Command = new PutObjectCommand({
         Bucket: this.configService.get('BUCKET_NAME'),
@@ -97,7 +105,7 @@ export class UserService {
         },
       });
       await this.cfClient.send(cfCommand);
-
+      console.log('temp');
       return { image: imageUrl };
     } catch (err) {
       console.log(err);
@@ -107,17 +115,26 @@ export class UserService {
 
   async deleteProfileImage(userId: string) {
     try {
+      this.deleteS3Image(userId);
+      await this.userModel.updateOne({
+        id: userId,
+        image: `${this.configService.get('DEFAULT_IMAGE')}`,
+      });
+      return;
+    } catch (err) {
+      console.log(err);
+      throw new HttpException('Forbidden', 403);
+    }
+  }
+
+  async deleteS3Image(userId: string) {
+    try {
       const user = await this.userModel.findOne({ id: userId });
       const command = new DeleteObjectCommand({
         Bucket: this.configService.get('BUCKET_NAME'),
         Key: String('images/' + userId + extname(user.image)),
       });
       await this.s3Client.send(command);
-      await this.userModel.updateOne({
-        id: userId,
-        image: `${this.configService.get('DEFAULT_IMAGE')}`,
-      });
-      return;
     } catch (err) {
       console.log(err);
       throw new HttpException('Forbidden', 403);

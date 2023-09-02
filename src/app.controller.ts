@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, HttpException } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
@@ -16,6 +16,6 @@ export class AppController {
   @Get('test')
   async testFunction() {
     console.log('test');
-    throw new HttpException('dddd', 403);
+    return 'ddd';
   }
 }

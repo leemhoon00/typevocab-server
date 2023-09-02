@@ -44,3 +44,8 @@ export class UpdateUserDto {
   @ApiProperty({ description: '유저 회사' })
   company: string;
 }
+
+export class FileUploadDto {
+  @ApiProperty({ description: '유저 프로필 이미지' })
+  file: Express.Multer.File;
+}

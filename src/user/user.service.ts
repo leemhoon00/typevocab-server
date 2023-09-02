@@ -67,7 +67,7 @@ export class UserService {
     } else {
       res.clearCookie('jwt');
       res.clearCookie('isLoggedIn');
-      return res.send();
+      return res.redirect(this.configService.get('CLIENT_URL'));
     }
   }
 
@@ -105,7 +105,7 @@ export class UserService {
         },
       });
       await this.cfClient.send(cfCommand);
-      return { image: imageUrl };
+      return;
     } catch (err) {
       console.log(err);
       throw new HttpException('Not Found', 404);

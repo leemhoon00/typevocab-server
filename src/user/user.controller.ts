@@ -14,17 +14,35 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserService } from './user.service';
 import { Request, Response } from 'express';
+import { GetUserDto, UpdateUserDto } from './dto/user.dto';
+import {
+  ApiTags,
+  ApiCookieAuth,
+  ApiOkResponse,
+  ApiHeader,
+  ApiUnauthorizedResponse,
+  ApiNotFoundResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('user')
+@ApiCookieAuth('jwt')
+@ApiHeader({
+  name: 'cookie: jwt',
+})
+@ApiUnauthorizedResponse({ description: 'unAuthorization' })
+@ApiNotFoundResponse({ description: '404 Not Found' })
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiOkResponse({ description: '유저 정보 가져오기', type: GetUserDto })
   @UseGuards(JwtAuthGuard)
   @Get()
   get(@Req() req: Request) {
     return this.userService.getUser(req.user.userId);
   }
 
+  @ApiOkResponse({ description: '유저 정보 수정하기', type: UpdateUserDto })
   @UseGuards(JwtAuthGuard)
   @Put()
   update(@Req() req: Request) {

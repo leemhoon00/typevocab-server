@@ -52,7 +52,7 @@ export class UserService {
     if (result.modifiedCount !== 0) {
       return;
     } else {
-      throw new HttpException('Forbidden', 403);
+      throw new HttpException('Not Found', 404);
     }
   }
 
@@ -63,7 +63,7 @@ export class UserService {
     }
     const result = await this.userModel.deleteOne({ id: userId });
     if (result.deletedCount === 0) {
-      throw new HttpException('Forbidden', 403);
+      throw new HttpException('Not Found', 404);
     } else {
       res.clearCookie('jwt');
       res.clearCookie('isLoggedIn');
@@ -105,11 +105,10 @@ export class UserService {
         },
       });
       await this.cfClient.send(cfCommand);
-      console.log('temp');
       return { image: imageUrl };
     } catch (err) {
       console.log(err);
-      throw new HttpException('Forbidden', 403);
+      throw new HttpException('Not Found', 404);
     }
   }
 
@@ -123,7 +122,7 @@ export class UserService {
       return;
     } catch (err) {
       console.log(err);
-      throw new HttpException('Forbidden', 403);
+      throw new HttpException('Not Found', 404);
     }
   }
 
@@ -137,7 +136,7 @@ export class UserService {
       await this.s3Client.send(command);
     } catch (err) {
       console.log(err);
-      throw new HttpException('Forbidden', 403);
+      throw new HttpException('Not Found', 404);
     }
   }
 }

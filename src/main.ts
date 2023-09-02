@@ -20,6 +20,7 @@ async function bootstrap() {
     .setDescription('TypeVocab API description')
     .setVersion('1.0')
     .addTag('typevocab')
+    .addCookieAuth('jwt')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

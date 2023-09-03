@@ -41,7 +41,7 @@ export class UserController {
   @ApiOkResponse({ description: 'ok', type: GetUserDto })
   @UseGuards(JwtAuthGuard)
   @Get()
-  get(@Req() req: Request) {
+  get(@Req() req: Request): Promise<GetUserDto> {
     return this.userService.getUser(req.user.userId);
   }
 

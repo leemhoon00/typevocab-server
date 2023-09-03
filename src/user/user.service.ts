@@ -2,7 +2,7 @@ import { Injectable, HttpException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, GetUserDto } from './dto/user.dto';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -37,7 +37,7 @@ export class UserService {
     return this.userModel.findOne({ id: userId });
   }
 
-  async getUser(userId: string): Promise<User> {
+  async getUser(userId: string): Promise<GetUserDto> {
     return this.userModel.findOne(
       { id: userId },
       { _id: false, __v: false, id: false, provider: false },
@@ -82,6 +82,7 @@ export class UserService {
         Bucket: this.configService.get('BUCKET_NAME'),
         Key: String('images/' + userId + extname(file.originalname)),
         Body: file.buffer,
+        ContentType: file.mimetype,
       });
       await this.s3Client.send(s3Command);
       const filename = String(userId + extname(file.originalname));

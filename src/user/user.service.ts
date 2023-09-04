@@ -1,7 +1,7 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/user.schema';
+import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto, GetUserDto } from './dto/user.dto';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
@@ -28,25 +28,29 @@ export class UserService {
     this.cfClient = new CloudFrontClient({});
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
 
-  async findUser(userId: string): Promise<User> {
-    return this.userModel.findOne({ id: userId });
+  async findUserByKakaoId(id: string): Promise<UserDocument> {
+    return this.userModel.findOne({ id });
   }
 
-  async getUser(userId: string): Promise<GetUserDto> {
+  async findUser(_id: string): Promise<UserDocument> {
+    return this.userModel.findOne({ _id });
+  }
+
+  async getUser(_id: string): Promise<GetUserDto> {
     return this.userModel.findOne(
-      { id: userId },
+      { _id },
       { _id: false, __v: false, id: false, provider: false },
     );
   }
 
   async updateUser(req: Request) {
     const result = await this.userModel.updateOne(
-      { id: req.user.userId },
+      { _id: req.user._id },
       { $set: { ...req.body } },
     );
     if (result.modifiedCount !== 0) {
@@ -56,41 +60,41 @@ export class UserService {
     }
   }
 
-  async deleteUser(userId: string, res: Response) {
-    const user = await this.userModel.findOne({ id: userId });
+  async deleteUser(_id: string, res: Response) {
+    const user = await this.userModel.findOne({ _id });
     if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
-      await this.deleteS3Image(userId);
+      await this.deleteS3Image(_id);
     }
-    const result = await this.userModel.deleteOne({ id: userId });
+    const result = await this.userModel.deleteOne({ _id: _id });
     if (result.deletedCount === 0) {
       throw new HttpException('Not Found', 404);
     } else {
       res.clearCookie('jwt');
       res.clearCookie('isLoggedIn');
-      return res.redirect(this.configService.get('CLIENT_URL'));
+      return res.send();
     }
   }
 
-  async uploadProfileImage(userId: string, file: Express.Multer.File) {
+  async uploadProfileImage(_id: string, file: Express.Multer.File) {
     try {
-      const user = await this.getUser(userId);
+      const user = await this.getUser(_id);
       if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
-        await this.deleteS3Image(userId);
+        await this.deleteS3Image(_id);
       }
       // S3 upload
       const s3Command = new PutObjectCommand({
         Bucket: this.configService.get('BUCKET_NAME'),
-        Key: String('images/' + userId + extname(file.originalname)),
+        Key: String('images/' + _id + extname(file.originalname)),
         Body: file.buffer,
         ContentType: file.mimetype,
       });
       await this.s3Client.send(s3Command);
-      const filename = String(userId + extname(file.originalname));
+      const filename = String(_id + extname(file.originalname));
       const imageUrl = `${this.configService.get(
         'CLOUDFRONT_URL',
       )}/${filename}`;
       await this.userModel.updateOne(
-        { id: userId },
+        { _id: _id },
         { $set: { image: imageUrl } },
       );
 
@@ -113,11 +117,11 @@ export class UserService {
     }
   }
 
-  async deleteProfileImage(userId: string) {
+  async deleteProfileImage(_id: string) {
     try {
-      this.deleteS3Image(userId);
+      this.deleteS3Image(_id);
       await this.userModel.updateOne({
-        id: userId,
+        _id: _id,
         image: `${this.configService.get('DEFAULT_IMAGE')}`,
       });
       return;
@@ -127,12 +131,12 @@ export class UserService {
     }
   }
 
-  async deleteS3Image(userId: string) {
+  async deleteS3Image(_id: string) {
     try {
-      const user = await this.userModel.findOne({ id: userId });
+      const user = await this.userModel.findOne({ _id });
       const command = new DeleteObjectCommand({
         Bucket: this.configService.get('BUCKET_NAME'),
-        Key: String('images/' + userId + extname(user.image)),
+        Key: String('images/' + _id + extname(user.image)),
       });
       await this.s3Client.send(command);
     } catch (err) {

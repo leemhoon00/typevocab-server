@@ -13,7 +13,7 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOperation({ summary: '네이버 로그인' })
+  @ApiOperation({ summary: '카카오 로그인' })
   @ApiMovedPermanentlyResponse({
     description: '홈으로 리다이렉트',
   })

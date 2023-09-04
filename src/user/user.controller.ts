@@ -19,10 +19,8 @@ import {
   ApiTags,
   ApiCookieAuth,
   ApiOkResponse,
-  ApiHeader,
   ApiUnauthorizedResponse,
   ApiNotFoundResponse,
-  ApiMovedPermanentlyResponse,
   ApiBody,
   ApiOperation,
   ApiConsumes,
@@ -30,7 +28,6 @@ import {
 
 @ApiTags('user')
 @ApiCookieAuth('jwt')
-@ApiHeader({ name: 'cookie: jwt' })
 @ApiUnauthorizedResponse({ description: 'unAuthorization' })
 @ApiNotFoundResponse({ description: '404 Not Found' })
 @Controller('user')
@@ -42,7 +39,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get()
   get(@Req() req: Request): Promise<GetUserDto> {
-    return this.userService.getUser(req.user.userId);
+    return this.userService.getUser(req.user._id);
   }
 
   @ApiOperation({ summary: '유저 정보 수정하기' })
@@ -55,11 +52,11 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '유저 정보 삭제하기' })
-  @ApiMovedPermanentlyResponse({ description: '홈으로 리다이렉트' })
+  @ApiOkResponse({ description: 'ok' })
   @UseGuards(JwtAuthGuard)
   @Delete()
   delete(@Req() req: Request, @Res() res: Response) {
-    return this.userService.deleteUser(req.user.userId, res);
+    return this.userService.deleteUser(req.user._id, res);
   }
 
   @ApiOperation({ summary: '유저 프로필 이미지 업로드' })
@@ -73,7 +70,7 @@ export class UserController {
     @Req() req: Request,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.uploadProfileImage(req.user.userId, file);
+    return this.userService.uploadProfileImage(req.user._id, file);
   }
 
   @ApiOperation({ summary: '유저 프로필 이미지 삭제' })
@@ -81,6 +78,6 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Delete('image')
   deleteProfileImage(@Req() req: Request) {
-    return this.userService.deleteProfileImage(req.user.userId);
+    return this.userService.deleteProfileImage(req.user._id);
   }
 }

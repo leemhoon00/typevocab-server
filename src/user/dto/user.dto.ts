@@ -9,9 +9,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   readonly provider: string;
-
-  @IsString()
-  readonly email?: string;
 }
 
 export class GetUserDto {

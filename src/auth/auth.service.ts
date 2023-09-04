@@ -3,6 +3,7 @@ import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { UserDocument } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -13,14 +14,14 @@ export class AuthService {
   ) {}
 
   async kakaoLogin(id: string, res: Response) {
-    let user = await this.userService.findUser(id);
+    let user: UserDocument = await this.userService.findUserByKakaoId(id);
     if (!user) {
       user = await this.userService.create({
         id,
         provider: 'kakao',
       });
     }
-    const payload = { id: user.id };
+    const payload = { _id: user._id };
     const token = this.jwtService.sign(payload);
     res.cookie('jwt', token, { httpOnly: true });
     res.cookie('isLoggedIn', true, { httpOnly: false });

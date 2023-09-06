@@ -93,10 +93,7 @@ export class UserService {
       const imageUrl = `${this.configService.get(
         'CLOUDFRONT_URL',
       )}/${filename}`;
-      await this.userModel.updateOne(
-        { _id: _id },
-        { $set: { image: imageUrl } },
-      );
+      await this.userModel.updateOne({ _id }, { $set: { image: imageUrl } });
 
       // CloudFront invalidation
       const cfCommand = new CreateInvalidationCommand({
@@ -121,7 +118,7 @@ export class UserService {
     try {
       this.deleteS3Image(_id);
       await this.userModel.updateOne({
-        _id: _id,
+        _id,
         image: `${this.configService.get('DEFAULT_IMAGE')}`,
       });
       return;

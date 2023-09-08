@@ -5,7 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'debug', 'verbose', 'log'],
+  });
   const configService = app.get(ConfigService);
   const client_url = configService.get<string>('CLIENT_URL');
   app.enableCors({

@@ -3,10 +3,10 @@ import { HydratedDocument, Types, SchemaTypes } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { Vocabulary } from './vocabulary.schema';
 
-export type WordBookDocument = HydratedDocument<WordBook>;
+export type FolderDocument = HydratedDocument<Folder>;
 
 @Schema()
-export class WordBook {
+export class Folder {
   @Prop({ required: true, type: SchemaTypes.ObjectId, ref: User.name })
   user: Types.ObjectId;
 
@@ -17,4 +17,4 @@ export class WordBook {
   vocabularies: [Vocabulary];
 }
 
-export const WordBookSchema = SchemaFactory.createForClass(WordBook);
+export const FolderSchema = SchemaFactory.createForClass(Folder);

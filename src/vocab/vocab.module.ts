@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { VocabController } from './vocab.controller';
 import { VocabService } from './vocab.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { WordBook, WordBookSchema } from './schemas/wordbook.schema';
+import { Folder, FolderSchema } from './schemas/folder.schema';
 import { Word, WordSchema } from './schemas/word.schema';
 import { Vocabulary, VocabularySchema } from './schemas/vocabulary.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: WordBook.name, schema: WordBookSchema },
+      { name: Folder.name, schema: FolderSchema },
       { name: Word.name, schema: WordSchema },
       { name: Vocabulary.name, schema: VocabularySchema },
     ]),

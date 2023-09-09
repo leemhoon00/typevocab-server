@@ -13,8 +13,11 @@ export class Folder {
   @Prop({ required: true })
   title: string;
 
-  @Prop({ default: [] })
-  vocabularies: [Vocabulary];
+  @Prop({
+    default: [],
+    type: [{ type: SchemaTypes.ObjectId, ref: Vocabulary.name }],
+  })
+  vocabularies: [Types.ObjectId];
 }
 
 export const FolderSchema = SchemaFactory.createForClass(Folder);

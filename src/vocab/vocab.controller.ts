@@ -21,4 +21,10 @@ export class VocabController {
   async createFolder(@Req() req: Request, @Body() body) {
     return this.vocabService.createFolder(req.user._id, body.folderName);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('folder')
+  async getFolders(@Req() req: Request) {
+    return this.vocabService.getFolders(req.user._id);
+  }
 }

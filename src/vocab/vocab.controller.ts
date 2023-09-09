@@ -8,6 +8,7 @@ import {
   Req,
   Res,
   Body,
+  Param,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Request, Response } from 'express';
@@ -26,5 +27,11 @@ export class VocabController {
   @Get('folder')
   async getFolders(@Req() req: Request) {
     return this.vocabService.getFolders(req.user._id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('folder/:folderId')
+  async deleteFolder(@Param() param) {
+    return this.vocabService.deleteFolder(param.folderId);
   }
 }

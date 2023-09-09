@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 export class VocabService {
   constructor(@InjectModel(Folder.name) private folderModel: Model<Folder>) {}
   async createFolder(_id: string, folderName: string) {
-    return this.folderModel.create({
+    return await this.folderModel.create({
       user: new Types.ObjectId(_id),
       title: folderName,
     });
@@ -20,5 +20,17 @@ export class VocabService {
       { user: new Types.ObjectId(_id) },
       { user: false, __v: false },
     );
+  }
+
+  async deleteFolder(folderId: string) {
+    console.log(folderId);
+    const result = await this.folderModel.deleteOne({
+      _id: new Types.ObjectId(folderId),
+    });
+    if (result.deletedCount !== 0) {
+      return;
+    } else {
+      throw new HttpException('Not Found', 404);
+    }
   }
 }

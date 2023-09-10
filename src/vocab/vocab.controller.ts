@@ -43,4 +43,10 @@ export class VocabController {
       body.vocabularyName,
     );
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('words')
+  async createWords(@Body() body) {
+    return this.vocabService.createWords(body.vocabularyId, body.words);
+  }
 }

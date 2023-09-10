@@ -10,7 +10,7 @@ export class Vocabulary {
   title: string;
 
   @Prop({ default: [], type: [{ type: SchemaTypes.ObjectId, ref: Word.name }] })
-  words: [Types.ObjectId];
+  words: Types.ObjectId[] | null[];
 }
 
 export const VocabularySchema = SchemaFactory.createForClass(Vocabulary);

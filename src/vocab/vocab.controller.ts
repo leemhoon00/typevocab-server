@@ -34,4 +34,13 @@ export class VocabController {
   async deleteFolder(@Param() param) {
     return this.vocabService.deleteFolder(param.folderId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('vocabulary')
+  async createVocabulary(@Body() body) {
+    return this.vocabService.createVocabulary(
+      body.folderId,
+      body.vocabularyName,
+    );
+  }
 }

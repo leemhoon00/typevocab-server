@@ -9,7 +9,7 @@ export class Vocabulary {
   @Prop({ required: true })
   title: string;
 
-  @Prop({ default: [], type: SchemaTypes.ObjectId, ref: Word.name })
+  @Prop({ default: [], type: [{ type: SchemaTypes.ObjectId, ref: Word.name }] })
   words: [Types.ObjectId];
 }
 

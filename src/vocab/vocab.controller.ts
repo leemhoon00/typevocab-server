@@ -45,8 +45,20 @@ export class VocabController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Delete('vocabulary/:vocabularyId')
+  async deleteVocabulary(@Param() param) {
+    return this.vocabService.deleteVocabulary(param.vocabularyId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('words')
   async createWords(@Body() body) {
     return this.vocabService.createWords(body.vocabularyId, body.words);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('words/:vocabularyId')
+  async getWords(@Param() param) {
+    return await this.vocabService.getWords(param.vocabularyId);
   }
 }

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types, SchemaTypes } from 'mongoose';
+import { HydratedDocument, Types, SchemaTypes, model } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { Vocabulary } from './vocabulary.schema';
 
@@ -15,9 +15,9 @@ export class Folder {
 
   @Prop({
     default: [],
-    type: [{ type: SchemaTypes.ObjectId, ref: Vocabulary.name }],
+    type: [{ type: SchemaTypes.ObjectId, ref: () => Vocabulary }],
   })
-  vocabularies: [Types.ObjectId];
+  vocabularies: Types.ObjectId[];
 }
 
 export const FolderSchema = SchemaFactory.createForClass(Folder);

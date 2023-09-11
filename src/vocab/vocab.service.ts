@@ -28,7 +28,19 @@ export class VocabService {
       .populate('vocabularies', { __v: false, words: false });
   }
 
+  async getFolder(folderId: string) {
+    return await this.folderModel
+      .findById(folderId, { user: false, __v: false })
+      .populate('vocabularies', { __v: false, words: false });
+  }
+
   async deleteFolder(folderId: string) {
+    // Delete all vocabularies in the folder
+    const toDeleteVocab = await this.getFolder(folderId);
+    for (const vocab of toDeleteVocab.vocabularies) {
+      await this.deleteVocabulary(vocab._id.toString());
+    }
+
     const result = await this.folderModel.deleteOne({
       _id: new Types.ObjectId(folderId),
     });
@@ -44,7 +56,7 @@ export class VocabService {
     const vocabulary = await this.vocabularyModel.create({
       title: vocabularyName,
     });
-    folder.vocabularies.push(vocabulary._id);
+    folder.vocabularies.push(new Types.ObjectId(vocabulary._id));
     await folder.save();
 
     return this.getFolders(folder.user.toString());
@@ -63,5 +75,27 @@ export class VocabService {
     vocabulary.words = wordIds;
     await vocabulary.save();
     return;
+  }
+
+  async getWords(vocabularyId: string) {
+    return await this.vocabularyModel
+      .findById(vocabularyId)
+      .populate('words', { __v: false });
+  }
+
+  async deleteVocabulary(vocabularyId: string) {
+    // Delete all words in the vocabulary
+    const toDeleteWords = await this.getWords(vocabularyId);
+    this.wordModel.deleteMany({
+      _id: { $in: toDeleteWords.words.map((word) => word._id) },
+    });
+    const result = await this.vocabularyModel.deleteOne({
+      _id: new Types.ObjectId(vocabularyId),
+    });
+    if (result.deletedCount !== 0) {
+      return;
+    } else {
+      throw new HttpException('Not Found', 404);
+    }
   }
 }

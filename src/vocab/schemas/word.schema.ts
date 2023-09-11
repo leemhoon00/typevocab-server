@@ -9,7 +9,7 @@ export class Word {
   word: string;
 
   @Prop({ required: true })
-  meaning: [string];
+  meaning: string;
 }
 
 export const WordSchema = SchemaFactory.createForClass(Word);

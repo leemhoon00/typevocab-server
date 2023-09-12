@@ -61,4 +61,10 @@ export class VocabController {
   async getWords(@Param() param) {
     return await this.vocabService.getWords(param.vocabularyId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('speech/:word')
+  async getSpeech(@Param() param, @Res() res: Response) {
+    return await this.vocabService.getSpeech(param.word, res);
+  }
 }

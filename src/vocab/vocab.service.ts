@@ -6,14 +6,18 @@ import { Vocabulary, VocabularyDocument } from './schemas/vocabulary.schema';
 import { Word, WordDocument } from './schemas/word.schema';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 
 @Injectable()
 export class VocabService {
+  pollyClient: any;
   constructor(
     @InjectModel(Folder.name) private folderModel: Model<Folder>,
     @InjectModel(Vocabulary.name) private vocabularyModel: Model<Vocabulary>,
     @InjectModel(Word.name) private wordModel: Model<Word>,
-  ) {}
+  ) {
+    this.pollyClient = new PollyClient({});
+  }
   async createFolder(_id: string, folderName: string) {
     await this.folderModel.create({
       user: new Types.ObjectId(_id),
@@ -97,5 +101,19 @@ export class VocabService {
     } else {
       throw new HttpException('Not Found', 404);
     }
+  }
+
+  async getSpeech(word: string, res: Response) {
+    const command = new SynthesizeSpeechCommand({
+      Engine: 'standard',
+      LanguageCode: 'en-US',
+      OutputFormat: 'mp3',
+      Text: word,
+      TextType: 'text',
+      VoiceId: 'Joanna',
+    });
+    const response = await this.pollyClient.send(command);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    response.AudioStream.pipe(res);
   }
 }

@@ -12,6 +12,7 @@ import {
   GetFolderDto,
   CreateWordsDto,
   GetWordsDto,
+  CreateVocabularyDto,
 } from './dto/vocab.dto';
 
 @Injectable()
@@ -65,12 +66,13 @@ export class VocabService {
   }
 
   async createVocabulary(
-    folderId: string,
-    vocabularyName: string,
+    createVocabularyDto: CreateVocabularyDto,
   ): Promise<GetFoldersDto[]> {
-    const folder = await this.folderModel.findById(folderId);
+    const folder = await this.folderModel.findById(
+      createVocabularyDto.folderId,
+    );
     const vocabulary = await this.vocabularyModel.create({
-      title: vocabularyName,
+      title: createVocabularyDto.vocabularyName,
     });
     folder.vocabularies.push(new Types.ObjectId(vocabulary._id));
     await folder.save();

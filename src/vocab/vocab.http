@@ -8,7 +8,7 @@ Cookie: jwt={{jwt}}
 Content-Type: application/json
 
 {
-    "folderName": "folder name"
+    "folderName2": "folder name22"
 }
 
 
@@ -46,7 +46,7 @@ Content-Type: application/json
 
 {
     "vocabularyId": "6501b27790e7d342a3485863",
-    "word": [
+    "words": [
         {
             "word": "apple",
             "meaning": "사과"

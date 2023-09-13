@@ -1,12 +1,18 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Folder, FolderDocument } from './schemas/folder.schema';
-import { Vocabulary, VocabularyDocument } from './schemas/vocabulary.schema';
-import { Word, WordDocument } from './schemas/word.schema';
-import { Request, Response } from 'express';
-import { ConfigService } from '@nestjs/config';
+import { Folder } from './schemas/folder.schema';
+import { Vocabulary } from './schemas/vocabulary.schema';
+import { Word } from './schemas/word.schema';
+import { Response } from 'express';
 import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
+import {
+  CreateFolderDto,
+  GetFoldersDto,
+  GetFolderDto,
+  CreateWordsDto,
+  GetWordsDto,
+} from './dto/vocab.dto';
 
 @Injectable()
 export class VocabService {
@@ -18,27 +24,30 @@ export class VocabService {
   ) {
     this.pollyClient = new PollyClient({});
   }
-  async createFolder(_id: string, folderName: string) {
+  async createFolder(
+    _id: string,
+    createFolderDto: CreateFolderDto,
+  ): Promise<GetFoldersDto[]> {
     await this.folderModel.create({
       user: new Types.ObjectId(_id),
-      title: folderName,
+      title: createFolderDto.folderName,
     });
-    return this.getFolders(_id);
+    return await this.getFolders(_id);
   }
 
-  async getFolders(_id: string) {
-    return this.folderModel
+  async getFolders(_id: string): Promise<GetFoldersDto[]> {
+    return await this.folderModel
       .find({ user: new Types.ObjectId(_id) }, { user: false, __v: false })
       .populate('vocabularies', { __v: false, words: false });
   }
 
-  async getFolder(folderId: string) {
+  async getFolder(folderId: string): Promise<GetFolderDto> {
     return await this.folderModel
       .findById(folderId, { user: false, __v: false })
       .populate('vocabularies', { __v: false, words: false });
   }
 
-  async deleteFolder(folderId: string) {
+  async deleteFolder(folderId: string): Promise<void> {
     // Delete all vocabularies in the folder
     const toDeleteVocab = await this.getFolder(folderId);
     for (const vocab of toDeleteVocab.vocabularies) {
@@ -55,7 +64,10 @@ export class VocabService {
     }
   }
 
-  async createVocabulary(folderId: string, vocabularyName: string) {
+  async createVocabulary(
+    folderId: string,
+    vocabularyName: string,
+  ): Promise<GetFoldersDto[]> {
     const folder = await this.folderModel.findById(folderId);
     const vocabulary = await this.vocabularyModel.create({
       title: vocabularyName,
@@ -66,10 +78,12 @@ export class VocabService {
     return this.getFolders(folder.user.toString());
   }
 
-  async createWords(vocabularyId: string, words) {
-    const vocabulary = await this.vocabularyModel.findById(vocabularyId);
+  async createWords(createWordDto: CreateWordsDto): Promise<void> {
+    const vocabulary = await this.vocabularyModel.findById(
+      createWordDto.vocabularyId,
+    );
     const wordIds: Types.ObjectId[] = [];
-    for (const word of words) {
+    for (const word of createWordDto.words) {
       const wordObj = await this.wordModel.create({
         word: word.word,
         meaning: word.meaning,
@@ -81,16 +95,16 @@ export class VocabService {
     return;
   }
 
-  async getWords(vocabularyId: string) {
+  async getWords(vocabularyId: string): Promise<GetWordsDto> {
     return await this.vocabularyModel
       .findById(vocabularyId)
       .populate('words', { __v: false });
   }
 
-  async deleteVocabulary(vocabularyId: string) {
+  async deleteVocabulary(vocabularyId: string): Promise<void> {
     // Delete all words in the vocabulary
     const toDeleteWords = await this.getWords(vocabularyId);
-    this.wordModel.deleteMany({
+    await this.wordModel.deleteMany({
       _id: { $in: toDeleteWords.words.map((word) => word._id) },
     });
     const result = await this.vocabularyModel.deleteOne({

@@ -8,6 +8,8 @@ import {
   Res,
   Body,
   Param,
+  Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Request, Response } from 'express';
@@ -19,7 +21,12 @@ import {
   CreateWordsDto,
   GetWordsDto,
 } from './dto/vocab.dto';
-import { FolderIdParam, VocabularyIdParam, WordParam } from './dto/param.dto';
+import {
+  FolderIdParam,
+  VocabularyIdParam,
+  WordParam,
+  CreateProblemParam,
+} from './dto/param.dto';
 import {
   ApiTags,
   ApiCookieAuth,
@@ -28,6 +35,7 @@ import {
   ApiUnauthorizedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 @ApiTags('vocab')
@@ -112,5 +120,15 @@ export class VocabController {
   @Get('speech/:word')
   async getSpeech(@Param() wordParam: WordParam, @Res() res: Response) {
     return await this.vocabService.getSpeech(wordParam.word, res);
+  }
+
+  @ApiOperation({ summary: '문제 생성' })
+  @UseGuards(JwtAuthGuard)
+  @Get('problem')
+  async getProblem(
+    @Query(new ValidationPipe({ transform: true })) query: CreateProblemParam,
+  ) {
+    console.log(query);
+    return;
   }
 }

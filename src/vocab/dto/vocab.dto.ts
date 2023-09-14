@@ -15,6 +15,16 @@ export class WordDto {
   meaning: string;
 }
 
+export class VocabularyDto {
+  @ApiProperty()
+  @IsMongoId()
+  _id: string;
+
+  @ApiProperty()
+  @IsString()
+  title: string;
+}
+
 export class CreateFolderDto {
   @ApiProperty({ description: '폴더 이름' })
   @IsString()
@@ -30,8 +40,9 @@ export class GetFoldersDto {
   @IsString()
   title: string;
 
-  @ApiProperty()
-  vocabularies: [{ _id: string; title: string }];
+  @ApiProperty({ type: [VocabularyDto] })
+  @IsArray()
+  vocabularies: [VocabularyDto];
 }
 
 export class GetFolderDto {

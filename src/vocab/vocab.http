@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 
-### GET /vocab/folders - Get all folders
+### GET /vocab/folder - Get all folders
 GET {{endpoint}}/vocab/folder HTTP/1.1
 Cookie: jwt={{jwt}}
 Content-Type: application/json

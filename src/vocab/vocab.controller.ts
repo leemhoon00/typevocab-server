@@ -20,6 +20,7 @@ import {
   CreateVocabularyDto,
   CreateWordsDto,
   GetWordsDto,
+  WordDto,
 } from './dto/vocab.dto';
 import {
   FolderIdParam,
@@ -33,15 +34,14 @@ import {
   ApiOperation,
   ApiBody,
   ApiUnauthorizedResponse,
-  ApiNotFoundResponse,
   ApiOkResponse,
-  ApiQuery,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
 @ApiTags('vocab')
 @ApiCookieAuth('jwt')
-@ApiUnauthorizedResponse({ description: 'unAuthorization' })
-@ApiNotFoundResponse({ description: '404 Not Found' })
+@ApiUnauthorizedResponse({ description: 'unauthorized - jwt 토큰 인증 실패' })
+@ApiBadRequestResponse({ description: 'badRequest - api 요청 형식 안맞음' })
 @Controller('vocab')
 export class VocabController {
   constructor(private readonly vocabService: VocabService) {}
@@ -123,12 +123,12 @@ export class VocabController {
   }
 
   @ApiOperation({ summary: '문제 생성' })
+  @ApiOkResponse({ description: 'ok', type: [WordDto] })
   @UseGuards(JwtAuthGuard)
   @Get('problem')
   async getProblem(
     @Query(new ValidationPipe({ transform: true })) query: CreateProblemParam,
   ) {
-    console.log(query);
-    return;
+    return this.vocabService.createProblem(query);
   }
 }

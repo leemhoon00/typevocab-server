@@ -13,7 +13,9 @@ import {
   CreateWordsDto,
   GetWordsDto,
   CreateVocabularyDto,
+  WordDto,
 } from './dto/vocab.dto';
+import { CreateProblemParam } from './dto/param.dto';
 
 @Injectable()
 export class VocabService {
@@ -131,5 +133,24 @@ export class VocabService {
     const response = await this.pollyClient.send(command);
     res.setHeader('Content-Type', 'application/octet-stream');
     response.AudioStream.pipe(res);
+  }
+
+  async createProblem(
+    createProblemParam: CreateProblemParam,
+  ): Promise<WordDto[]> {
+    const result = await this.vocabularyModel
+      .find(
+        {
+          _id: { $in: createProblemParam.vocabularies },
+        },
+        { __v: false },
+      )
+      .populate('words', { __v: false });
+    const words: any = result.map((vocabulary) => vocabulary.words).flat();
+    if (createProblemParam.randomOption) {
+      words.sort(() => Math.random() - 0.5);
+    }
+    console.log(words);
+    return words;
   }
 }

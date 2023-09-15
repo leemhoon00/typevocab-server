@@ -1,4 +1,4 @@
-import { IsString, IsMongoId, IsBoolean, IsArray } from 'class-validator';
+import { IsString, IsMongoId, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -24,6 +24,7 @@ export class CreateProblemParam {
   randomOption: boolean;
 
   @ApiProperty({ description: '단어장 아이디' })
-  @IsArray()
+  @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
+  @IsMongoId({ each: true })
   vocabularies: string[];
 }

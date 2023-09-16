@@ -11,9 +11,10 @@ export class VocabulariesRepository {
     private vocabularyModel: Model<VocabularyDocument>,
   ) {}
 
-  async create(createVocabularyDto: CreateVocabularyDto) {
+  async create(createVocabularyDto: CreateVocabularyDto): Promise<void> {
     const createdVocabulary = new this.vocabularyModel(createVocabularyDto);
-    return createdVocabulary.save();
+    await createdVocabulary.save();
+    return;
   }
 
   async findAllbyFolderId(

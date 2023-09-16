@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Word } from './words.schema';
 import { CreateWordsDto } from './words.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class WordsRepository {
@@ -16,7 +17,14 @@ export class WordsRepository {
         ...word,
       };
     });
+    await this.wordModel.deleteMany({ vocabularyId });
     await this.wordModel.insertMany(toCreateWords);
     return;
+  }
+
+  async findAllByVocabularyId(vocabularyId: Types.ObjectId) {
+    return await this.wordModel
+      .find({ vocabularyId }, { vocabularyId: false })
+      .exec();
   }
 }

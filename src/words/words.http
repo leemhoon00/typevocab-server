@@ -15,3 +15,7 @@ Content-Type: application/json
     }
   ]
 }
+
+### GET /words?vocabularyId=6505922e12c0a18b08041796 - Get words
+GET {{endpoint}}/words?vocabularyId=6505922e12c0a18b08041796
+Cookie: jwt={{jwt}}

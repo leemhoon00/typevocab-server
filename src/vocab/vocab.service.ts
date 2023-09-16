@@ -150,7 +150,6 @@ export class VocabService {
     if (createProblemParam.randomOption) {
       words.sort(() => Math.random() - 0.5);
     }
-    console.log(words);
     return words;
   }
 }

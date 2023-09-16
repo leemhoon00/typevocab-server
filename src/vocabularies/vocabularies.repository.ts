@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Vocabulary, VocabularyDocument } from './vocabulary.schema';
 import { CreateVocabularyDto } from './vocabularies.dto';
 
@@ -14,5 +14,11 @@ export class VocabulariesRepository {
   async create(createVocabularyDto: CreateVocabularyDto) {
     const createdVocabulary = new this.vocabularyModel(createVocabularyDto);
     return createdVocabulary.save();
+  }
+
+  async findAllbyFolderId(
+    folderId: Types.ObjectId,
+  ): Promise<VocabularyDocument[]> {
+    return this.vocabularyModel.find({ folderId }).exec();
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable, HttpException } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto, GetUserDto } from './dto/user.dto';
@@ -37,11 +37,11 @@ export class UserService {
     return this.userModel.findOne({ id });
   }
 
-  async findUser(_id: string): Promise<UserDocument> {
+  async findUser(_id: Types.ObjectId): Promise<UserDocument> {
     return this.userModel.findOne({ _id });
   }
 
-  async getUser(_id: string): Promise<GetUserDto> {
+  async getUser(_id: Types.ObjectId): Promise<GetUserDto> {
     return this.userModel.findOne(
       { _id },
       { _id: false, __v: false, id: false, provider: false },
@@ -60,7 +60,7 @@ export class UserService {
     }
   }
 
-  async deleteUser(_id: string, res: Response) {
+  async deleteUser(_id: Types.ObjectId, res: Response) {
     const user = await this.userModel.findOne({ _id });
     if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
       await this.deleteS3Image(_id);
@@ -75,7 +75,7 @@ export class UserService {
     }
   }
 
-  async uploadProfileImage(_id: string, file: Express.Multer.File) {
+  async uploadProfileImage(_id: Types.ObjectId, file: Express.Multer.File) {
     try {
       const user = await this.getUser(_id);
       if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
@@ -114,7 +114,7 @@ export class UserService {
     }
   }
 
-  async deleteProfileImage(_id: string) {
+  async deleteProfileImage(_id: Types.ObjectId) {
     try {
       this.deleteS3Image(_id);
       await this.userModel.updateOne({
@@ -128,7 +128,7 @@ export class UserService {
     }
   }
 
-  async deleteS3Image(_id: string) {
+  async deleteS3Image(_id: Types.ObjectId) {
     try {
       const user = await this.userModel.findOne({ _id });
       const command = new DeleteObjectCommand({

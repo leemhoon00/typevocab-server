@@ -4,7 +4,7 @@ import { Folder } from 'src/folders/folder.schema';
 
 export type VocabularyDocument = HydratedDocument<Vocabulary>;
 
-@Schema()
+@Schema({ versionKey: false })
 export class Vocabulary {
   @Prop({ required: true, type: SchemaTypes.ObjectId, ref: Folder.name })
   folderId: Types.ObjectId;

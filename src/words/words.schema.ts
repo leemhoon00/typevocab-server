@@ -4,7 +4,7 @@ import { Vocabulary } from '../vocabularies/vocabulary.schema';
 
 export type WordDocument = HydratedDocument<Word>;
 
-@Schema()
+@Schema({ versionKey: false })
 export class Word {
   @Prop({ required: true, type: SchemaTypes.ObjectId, ref: Vocabulary.name })
   vocabularyId: Types.ObjectId;

@@ -4,7 +4,7 @@ import { User } from 'src/user/schemas/user.schema';
 
 export type FolderDocument = HydratedDocument<Folder>;
 
-@Schema()
+@Schema({ versionKey: false })
 export class Folder {
   @Prop({ required: true, type: SchemaTypes.ObjectId, ref: User.name })
   userId: Types.ObjectId;

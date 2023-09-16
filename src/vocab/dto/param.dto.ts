@@ -1,10 +1,11 @@
 import { IsString, IsMongoId, IsBoolean } from 'class-validator';
+import { Types } from 'mongoose';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class FolderIdParam {
   @IsMongoId()
-  folderId: string;
+  folderId: Types.ObjectId;
 }
 
 export class VocabularyIdParam {

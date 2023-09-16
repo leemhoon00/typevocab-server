@@ -12,8 +12,13 @@ export class FoldersService {
     private readonly vocabulariesRepository: VocabulariesRepository,
   ) {}
 
-  async create(createFolderDto: CreateFolderDto) {
-    return await this.foldersRepository.create(createFolderDto);
+  async create(
+    createFolderDto: CreateFolderDto,
+  ): Promise<FolderAndVocabulariesDto[]> {
+    await this.foldersRepository.create(createFolderDto);
+    return await this.findAllFoldersAndVocabulariesByUserId(
+      createFolderDto.userId,
+    );
   }
 
   async findAllFoldersAndVocabulariesByUserId(

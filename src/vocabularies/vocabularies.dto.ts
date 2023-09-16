@@ -11,17 +11,17 @@ export class VocabularyDto {
   @IsMongoId()
   folderId: Types.ObjectId;
 
-  @ApiProperty({ example: '단어장 이름' })
+  @ApiProperty({ example: 'Day-1' })
   @IsString()
   vocabularyName: string;
 }
 
 export class CreateVocabularyDto {
-  @ApiProperty()
+  @ApiProperty({ example: '6505922e12c0a18b08041796' })
   @IsMongoId()
   folderId: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Day-1' })
   @IsString()
   vocabularyName: string;
 }

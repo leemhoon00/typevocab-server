@@ -8,10 +8,15 @@ import { CreateWordsDto } from './words.dto';
 export class WordsRepository {
   constructor(@InjectModel(Word.name) private wordModel: Model<Word>) {}
 
-  async create(createWordsDto: CreateWordsDto): Promise<Word> {
-    return await this.wordModel.create({
-      vocabulary: createWordsDto.vocabularyId,
-      words: createWordsDto.words,
+  async create(createWordsDto: CreateWordsDto): Promise<void> {
+    const { vocabularyId, words } = createWordsDto;
+    const toCreateWords = words.map((word) => {
+      return {
+        vocabularyId,
+        ...word,
+      };
     });
+    await this.wordModel.insertMany(toCreateWords);
+    return;
   }
 }

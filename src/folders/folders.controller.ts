@@ -3,28 +3,38 @@ import {
   UseGuards,
   Req,
   HttpCode,
-  Param,
+  Body,
   Post,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FoldersService } from './folders.service';
-import { CreateFolderDto } from './folders.dto';
-import { Request } from 'express';
+import { CreateFolderBodyDto } from './folders.dto';
 
-import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('folders')
+@ApiUnauthorizedResponse({ description: 'unauthorized - jwt 토큰 인증 실패' })
+@ApiBadRequestResponse({ description: 'badRequest - api 요청 형식 안맞음' })
 @Controller('folders')
 export class FoldersController {
   constructor(private readonly foldersService: FoldersService) {}
 
   @ApiOperation({ summary: '폴더 생성' })
-  @ApiParam({ name: 'folderName', description: '폴더 이름', type: 'string' })
-  @UseGuards(JwtAuthGuard)
+  @ApiBody({ description: '폴더 이름', type: CreateFolderBodyDto })
   @Post()
+  @UseGuards(JwtAuthGuard)
   @HttpCode(201)
-  async create(@Req() req: Request, @Param() createFolderDto: CreateFolderDto) {
-    createFolderDto.userId = req.user._id;
-    return await this.foldersService.create(createFolderDto);
+  async create(@Req() req: Request, @Body() body: CreateFolderBodyDto) {
+    return await this.foldersService.create({
+      userId: req.user._id,
+      folderName: body.folderName,
+    });
   }
 }

@@ -5,10 +5,11 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { VocabModule } from './vocab/vocab.module';
 import { FoldersModule } from './folders/folders.module';
 import { VocabulariesModule } from './vocabularies/vocabularies.module';
 import { WordsModule } from './words/words.module';
+
+import { VocabModule } from './vocab/vocab.module';
 
 @Module({
   imports: [
@@ -27,10 +28,10 @@ import { WordsModule } from './words/words.module';
     }),
     AuthModule,
     UserModule,
-    VocabModule,
     FoldersModule,
     VocabulariesModule,
     WordsModule,
+    VocabModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -22,4 +22,9 @@ export class VocabulariesRepository {
   ): Promise<VocabularyDocument[]> {
     return this.vocabularyModel.find({ folderId }).exec();
   }
+
+  async delete(vocabularyId: Types.ObjectId): Promise<void> {
+    await this.vocabularyModel.deleteOne({ _id: vocabularyId }).exec();
+    return;
+  }
 }

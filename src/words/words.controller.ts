@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { WordsService } from './words.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { CreateWordsDto } from './words.dto';
+import { CreateWordsDto, WordDto } from './words.dto';
 import { Types } from 'mongoose';
 
 import {
@@ -41,13 +41,13 @@ export class WordsController {
   }
 
   @ApiOperation({ summary: '단어 조회' })
-  @ApiResponse({ status: 200, description: 'ok' })
+  @ApiResponse({ status: 200, description: 'ok', type: [WordDto] })
   @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(200)
   async findAllByVocabularyId(
     @Query('vocabularyId') vocabularyId: Types.ObjectId,
-  ) {
+  ): Promise<WordDto[]> {
     return await this.wordsService.findAllByVocabularyId(vocabularyId);
   }
 }

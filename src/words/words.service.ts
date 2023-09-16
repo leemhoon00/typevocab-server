@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { WordsRepository } from './words.repository';
-import { CreateWordsDto } from './words.dto';
+import { CreateWordsDto, WordDto } from './words.dto';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -11,7 +11,9 @@ export class WordsService {
     return this.wordsRepository.create(createWordsDto);
   }
 
-  async findAllByVocabularyId(vocabularyId: Types.ObjectId) {
+  async findAllByVocabularyId(
+    vocabularyId: Types.ObjectId,
+  ): Promise<WordDto[]> {
     return await this.wordsRepository.findAllByVocabularyId(vocabularyId);
   }
 }

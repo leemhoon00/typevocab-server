@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Word } from './words.schema';
-import { CreateWordsDto } from './words.dto';
+import { CreateWordsDto, WordDto } from './words.dto';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -22,9 +22,16 @@ export class WordsRepository {
     return;
   }
 
-  async findAllByVocabularyId(vocabularyId: Types.ObjectId) {
+  async findAllByVocabularyId(
+    vocabularyId: Types.ObjectId,
+  ): Promise<WordDto[]> {
     return await this.wordModel
       .find({ vocabularyId }, { vocabularyId: false })
       .exec();
+  }
+
+  async deleteAllByVocabularyId(vocabularyId: Types.ObjectId): Promise<void> {
+    await this.wordModel.deleteMany({ vocabularyId });
+    return;
   }
 }

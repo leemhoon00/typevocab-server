@@ -11,14 +11,6 @@ export class WordDto {
   @IsMongoId()
   _id: Types.ObjectId;
 
-  @ApiProperty({
-    type: Types.ObjectId,
-    description: 'Vocabulary ID',
-    example: '5f9d2a3b9d9d9f9d9d9f9d9d',
-  })
-  @IsMongoId()
-  vocabularyId: Types.ObjectId;
-
   @ApiProperty()
   @IsAlpha()
   word: string;

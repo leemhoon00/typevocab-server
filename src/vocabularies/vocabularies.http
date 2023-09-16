@@ -10,3 +10,7 @@ Content-Type: application/json
   "folderId": "6505922e12c0a18b08041796",
   "vocabularyName": "Vocabulary 1"
 }
+
+### DELETE /vocabularies/:id - Delete a vocabulary
+DELETE {{endpoint}}/vocabularies/abc
+Cookie: jwt={{jwt}}

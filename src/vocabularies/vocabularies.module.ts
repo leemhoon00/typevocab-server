@@ -5,13 +5,17 @@ import { VocabulariesRepository } from './vocabularies.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Vocabulary, VocabularySchema } from './vocabulary.schema';
 
+import { WordsRepository } from 'src/words/words.repository';
+import { Word, WordSchema } from 'src/words/words.schema';
+
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Vocabulary.name, schema: VocabularySchema },
+      { name: Word.name, schema: WordSchema },
     ]),
   ],
   controllers: [VocabulariesController],
-  providers: [VocabulariesService, VocabulariesRepository],
+  providers: [VocabulariesService, VocabulariesRepository, WordsRepository],
 })
 export class VocabulariesModule {}

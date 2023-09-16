@@ -6,9 +6,9 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { VocabModule } from './vocab/vocab.module';
-import { FolderModule } from './folder/folder.module';
-import { VocabularyModule } from './vocabulary/vocabulary.module';
-import { WordModule } from './word/word.module';
+import { FoldersModule } from './folders/folders.module';
+import { VocabulariesModule } from './vocabularies/vocabularies.module';
+import { WordsModule } from './words/words.module';
 
 @Module({
   imports: [
@@ -28,9 +28,9 @@ import { WordModule } from './word/word.module';
     AuthModule,
     UserModule,
     VocabModule,
-    FolderModule,
-    VocabularyModule,
-    WordModule,
+    FoldersModule,
+    VocabulariesModule,
+    WordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -21,4 +21,9 @@ export class FoldersRepository {
   async findAllByUserId(userId: Types.ObjectId): Promise<FolderDocument[]> {
     return await this.folderModel.find({ userId }, { userId: false }).exec();
   }
+
+  async delete(folderId: Types.ObjectId): Promise<void> {
+    await this.folderModel.deleteOne({ _id: folderId }).exec();
+    return;
+  }
 }

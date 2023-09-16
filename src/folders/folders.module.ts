@@ -4,20 +4,29 @@ import { FoldersController } from './folders.controller';
 import { FoldersService } from './folders.service';
 import { FoldersRepository } from './folders.repository';
 import { Folder, FolderSchema } from './folder.schema';
+
+import { VocabulariesRepository } from '../vocabularies/vocabularies.repository';
 import {
   Vocabulary,
   VocabularySchema,
 } from '../vocabularies/vocabulary.schema';
-import { VocabulariesRepository } from '../vocabularies/vocabularies.repository';
+import { WordsRepository } from '../words/words.repository';
+import { Word, WordSchema } from '../words/words.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Folder.name, schema: FolderSchema },
       { name: Vocabulary.name, schema: VocabularySchema },
+      { name: Word.name, schema: WordSchema },
     ]),
   ],
   controllers: [FoldersController],
-  providers: [FoldersService, FoldersRepository, VocabulariesRepository],
+  providers: [
+    FoldersService,
+    FoldersRepository,
+    VocabulariesRepository,
+    WordsRepository,
+  ],
 })
 export class FoldersModule {}

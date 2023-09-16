@@ -27,4 +27,9 @@ export class VocabulariesRepository {
     await this.vocabularyModel.deleteOne({ _id: vocabularyId }).exec();
     return;
   }
+
+  async deleteAllByFolderId(folderId: Types.ObjectId): Promise<void> {
+    this.vocabularyModel.deleteMany({ folderId }).exec();
+    return;
+  }
 }

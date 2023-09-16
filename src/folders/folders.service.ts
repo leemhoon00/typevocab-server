@@ -4,12 +4,14 @@ import { CreateFolderDto, FolderAndVocabulariesDto } from './folders.dto';
 import { Types } from 'mongoose';
 
 import { VocabulariesRepository } from '../vocabularies/vocabularies.repository';
+import { WordsRepository } from '../words/words.repository';
 
 @Injectable()
 export class FoldersService {
   constructor(
     private readonly foldersRepository: FoldersRepository,
     private readonly vocabulariesRepository: VocabulariesRepository,
+    private readonly wordsRepository: WordsRepository,
   ) {}
 
   async create(
@@ -33,5 +35,18 @@ export class FoldersService {
       }),
     );
     return data;
+  }
+
+  async delete(folderId: Types.ObjectId): Promise<void> {
+    const vocabularies =
+      await this.vocabulariesRepository.findAllbyFolderId(folderId);
+    await Promise.all(
+      vocabularies.map(async (vocabulary) => {
+        await this.wordsRepository.deleteAllByVocabularyId(vocabulary._id);
+      }),
+    );
+    await this.vocabulariesRepository.deleteAllByFolderId(folderId);
+    await this.foldersRepository.delete(folderId);
+    return;
   }
 }

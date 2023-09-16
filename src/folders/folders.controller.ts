@@ -3,14 +3,17 @@ import {
   UseGuards,
   Req,
   HttpCode,
+  Param,
   Body,
   Post,
   Get,
+  Delete,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FoldersService } from './folders.service';
 import { CreateFolderBodyDto, FolderAndVocabulariesDto } from './folders.dto';
+import { Types } from 'mongoose';
 
 import {
   ApiTags,
@@ -67,5 +70,16 @@ export class FoldersController {
     return await this.foldersService.findAllFoldersAndVocabulariesByUserId(
       req.user._id,
     );
+  }
+
+  @ApiOperation({ summary: '폴더 삭제' })
+  @ApiResponse({ status: 204, description: 'No Content' })
+  @UseGuards(JwtAuthGuard)
+  @Delete(':folderId')
+  @HttpCode(204)
+  async deleteFolder(
+    @Param('folderId') folderId: Types.ObjectId,
+  ): Promise<void> {
+    return await this.foldersService.delete(folderId);
   }
 }

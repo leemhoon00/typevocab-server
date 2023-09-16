@@ -13,3 +13,8 @@ Content-Type: application/json
 ### GET /folders - Get all folders
 GET {{endpoint}}/folders HTTP/1.1
 Cookie: jwt={{jwt}}
+
+
+### DELETE /folders/:id - Delete a folder
+DELETE {{endpoint}}/folders/60a7b1b4b4b4b4b4b4b4b4b4 HTTP/1.1
+Cookie: jwt={{jwt}}

@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FoldersService } from './folders.service';
 import { CreateFolderBodyDto, FolderAndVocabulariesDto } from './folders.dto';
 import { Types } from 'mongoose';
+import { MongoIdPipe } from 'src/common/validation.pipe';
 
 import {
   ApiTags,
@@ -23,6 +24,7 @@ import {
   ApiBadRequestResponse,
   ApiCookieAuth,
   ApiResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiTags('folders')
@@ -38,8 +40,7 @@ export class FoldersController {
   @ApiResponse({
     status: 201,
     description: '폴더 생성 성공',
-    type: FolderAndVocabulariesDto,
-    isArray: true,
+    type: [FolderAndVocabulariesDto],
   })
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -58,8 +59,7 @@ export class FoldersController {
   @ApiResponse({
     status: 200,
     description: '폴더와 단어장 조회 성공',
-    type: FolderAndVocabulariesDto,
-    isArray: true,
+    type: [FolderAndVocabulariesDto],
   })
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -73,12 +73,18 @@ export class FoldersController {
   }
 
   @ApiOperation({ summary: '폴더 삭제' })
-  @ApiResponse({ status: 204, description: 'No Content' })
+  @ApiParam({
+    name: 'folderId',
+    description: '폴더 아이디',
+    type: String,
+    example: '5f2f4b4d6a6d4b4d6a6d4b4d',
+  })
+  @ApiResponse({ status: 204, description: '폴더 삭제 성공' })
   @UseGuards(JwtAuthGuard)
   @Delete(':folderId')
   @HttpCode(204)
   async deleteFolder(
-    @Param('folderId') folderId: Types.ObjectId,
+    @Param('folderId', MongoIdPipe) folderId: Types.ObjectId,
   ): Promise<void> {
     return await this.foldersService.delete(folderId);
   }

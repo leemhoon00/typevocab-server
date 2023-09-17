@@ -31,9 +31,10 @@ export class WordsService {
       TextType: 'text',
       VoiceId: 'Joanna',
     });
+
     const response = await this.pollyClient.send(command);
     const audioStream = response.AudioStream as any;
     res.setHeader('Content-Type', 'application/octet-stream');
-    audioStream.pipe(res);
+    return audioStream.pipe(res);
   }
 }

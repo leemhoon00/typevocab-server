@@ -6,7 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Vocabulary, VocabularySchema } from './vocabulary.schema';
 
 import { WordsRepository } from 'src/words/words.repository';
-import { Word, WordSchema } from 'src/words/words.schema';
+import { Word, WordSchema } from 'src/words/word.schema';
 
 @Module({
   imports: [
@@ -17,5 +17,6 @@ import { Word, WordSchema } from 'src/words/words.schema';
   ],
   controllers: [VocabulariesController],
   providers: [VocabulariesService, VocabulariesRepository, WordsRepository],
+  exports: [VocabulariesService, VocabulariesRepository],
 })
 export class VocabulariesModule {}

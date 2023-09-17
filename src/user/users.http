@@ -1,0 +1,41 @@
+@endpoint = http://localhost:3000
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGY4NmI5NTQwOGZmNDQ5MTFmMmFlNGQiLCJpYXQiOjE2OTQ1ODc0MTAsImV4cCI6MTY5NTE5MjIxMH0.aWhyUmbgE1VXcBq8mjiVNRDnwl9HlFNQ_JDb50M5AEw
+
+### 유저 정보 가져오기
+GET {{endpoint}}/users
+Cookie: jwt={{jwt}}
+
+### 유저 정보 수정하기
+PUT {{endpoint}}/users
+Cookie: jwt={{jwt}}
+Content-Type: application/json
+
+{
+  "name": "홍길동",
+  "email": "leemhoon00@naver.com",
+  "bio": "안녕하세요.",
+  "company": "우아한테크코스"
+}
+
+### 사진 업로드
+# POST /user/image
+POST {{endpoint}}/user/image
+Cookie: jwt={{jwt}}
+Content-Type: multipart/form-data; boundary=image-file-upload
+
+--image-file-upload
+Content-Disposition: form-data; name="file"; filename="nodejs.png"
+Content-Type: image/png
+
+< ../../temp/nodejs.png
+--image-file-upload--
+
+### 사진 삭제
+# DELETE /user/image
+DELETE {{endpoint}}/user/image
+Cookie: jwt={{jwt}}
+
+
+### 유저 삭제
+DELETE {{endpoint}}/users
+Cookie: jwt={{jwt}}

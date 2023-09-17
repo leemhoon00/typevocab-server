@@ -13,7 +13,7 @@ export class VocabulariesService {
     private wordsRepository: WordsRepository,
   ) {}
 
-  async create(createVocabularyDto: CreateVocabularyDto) {
+  async create(createVocabularyDto: CreateVocabularyDto): Promise<void> {
     return await this.vocabulariesRepository.create(createVocabularyDto);
   }
 

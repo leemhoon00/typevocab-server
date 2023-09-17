@@ -16,7 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { Request, Response } from 'express';
-import { UserInfoDto, UpdateUserInfoDto, FileUploadDto } from './users.dto';
+import { UserInfoDto, UpdateUserInfoDto } from './users.dto';
 import {
   ApiTags,
   ApiCookieAuth,
@@ -74,7 +74,7 @@ export class UsersController {
 
   @ApiOperation({ summary: '유저 프로필 이미지 업로드' })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ description: '이미지 파일', type: FileUploadDto })
+  @ApiBody({ description: '이미지 파일' })
   @ApiResponse({ status: 201, description: '업로드 성공' })
   @UseGuards(JwtAuthGuard)
   @Post('image')

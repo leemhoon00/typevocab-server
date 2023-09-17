@@ -9,7 +9,8 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { VocabulariesService } from './vocabularies.service';
-import { CreateVocabularyDto } from './vocabularies.dto';
+import { CreateVocabularyDto, CreateProblemsDto } from './vocabularies.dto';
+import { WordDto } from 'src/words/words.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -36,6 +37,18 @@ export class VocabulariesController {
   @HttpCode(201)
   async createVocabulary(@Body() createVocabularyDto: CreateVocabularyDto) {
     return await this.vocabulariesService.create(createVocabularyDto);
+  }
+
+  @ApiOperation({ summary: '문제 생성' })
+  @ApiResponse({ status: 201, description: 'Created' })
+  @ApiBody({ type: CreateProblemsDto })
+  @Post('/problems')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(201)
+  async createProblems(
+    @Body() createProblemsDto: CreateProblemsDto,
+  ): Promise<WordDto[]> {
+    return await this.vocabulariesService.createProblems(createProblemsDto);
   }
 
   @ApiOperation({ summary: '단어장 삭제' })

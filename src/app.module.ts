@@ -9,8 +9,6 @@ import { FoldersModule } from './folders/folders.module';
 import { VocabulariesModule } from './vocabularies/vocabularies.module';
 import { WordsModule } from './words/words.module';
 
-import { VocabModule } from './vocab/vocab.module';
-
 @Module({
   imports: [
     MongooseModule.forRootAsync({
@@ -31,7 +29,6 @@ import { VocabModule } from './vocab/vocab.module';
     FoldersModule,
     VocabulariesModule,
     WordsModule,
-    VocabModule,
   ],
   controllers: [AppController],
   providers: [AppService],

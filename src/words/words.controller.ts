@@ -6,12 +6,14 @@ import {
   Get,
   Post,
   Query,
+  Param,
+  Res,
 } from '@nestjs/common';
 import { WordsService } from './words.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateWordsDto, WordDto } from './words.dto';
 import { Types } from 'mongoose';
-
+import { Response } from 'express';
 import {
   ApiTags,
   ApiCookieAuth,
@@ -49,5 +51,17 @@ export class WordsController {
     @Query('vocabularyId') vocabularyId: Types.ObjectId,
   ): Promise<WordDto[]> {
     return await this.wordsService.findAllByVocabularyId(vocabularyId);
+  }
+
+  @ApiOperation({ summary: '단어 발음' })
+  @ApiResponse({ status: 200, description: 'ok' })
+  @UseGuards(JwtAuthGuard)
+  @Get(':word')
+  @HttpCode(200)
+  async speech(
+    @Param('word') word: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    return await this.wordsService.speech(word, res);
   }
 }

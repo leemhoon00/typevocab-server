@@ -16,5 +16,5 @@ Cookie: jwt={{jwt}}
 
 
 ### DELETE /folders/:id - Delete a folder
-DELETE {{endpoint}}/folders/60a7b1b4b4b4b4b4b4b4b4b4 HTTP/1.1
+DELETE {{endpoint}}/folders/123 HTTP/1.1
 Cookie: jwt={{jwt}}

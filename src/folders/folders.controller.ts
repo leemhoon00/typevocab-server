@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FoldersService } from './folders.service';
 import { CreateFolderBodyDto, FolderAndVocabulariesDto } from './folders.dto';
 import { Types } from 'mongoose';
+import { MongoIdPipe } from 'src/common/validation.pipe';
 
 import {
   ApiTags,
@@ -38,8 +39,7 @@ export class FoldersController {
   @ApiResponse({
     status: 201,
     description: '폴더 생성 성공',
-    type: FolderAndVocabulariesDto,
-    isArray: true,
+    type: [FolderAndVocabulariesDto],
   })
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -58,8 +58,7 @@ export class FoldersController {
   @ApiResponse({
     status: 200,
     description: '폴더와 단어장 조회 성공',
-    type: FolderAndVocabulariesDto,
-    isArray: true,
+    type: [FolderAndVocabulariesDto],
   })
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -78,7 +77,7 @@ export class FoldersController {
   @Delete(':folderId')
   @HttpCode(204)
   async deleteFolder(
-    @Param('folderId') folderId: Types.ObjectId,
+    @Param('folderId', MongoIdPipe) folderId: Types.ObjectId,
   ): Promise<void> {
     return await this.foldersService.delete(folderId);
   }

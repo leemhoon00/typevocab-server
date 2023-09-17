@@ -7,8 +7,8 @@ import { KakaoStrategy } from './strategies/kakao.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/user/user.schema';
-import { UsersRepository } from 'src/user/user.repository';
+import { User, UserSchema } from 'src/users/user.schema';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Module({
   imports: [

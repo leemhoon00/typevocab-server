@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { UsersRepository } from './user.repository';
+import { UsersRepository } from './users.repository';
 import { UserInfoDto, UpdateUserInfoDto } from './users.dto';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';

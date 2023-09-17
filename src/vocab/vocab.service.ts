@@ -28,7 +28,7 @@ export class VocabService {
     this.pollyClient = new PollyClient({});
   }
   async createFolder(
-    _id: string,
+    _id: Types.ObjectId,
     createFolderDto: CreateFolderDto,
   ): Promise<GetFoldersDto[]> {
     await this.folderModel.create({
@@ -38,19 +38,19 @@ export class VocabService {
     return await this.getFolders(_id);
   }
 
-  async getFolders(_id: string): Promise<GetFoldersDto[]> {
+  async getFolders(_id: Types.ObjectId): Promise<GetFoldersDto[]> {
     return await this.folderModel
       .find({ user: new Types.ObjectId(_id) }, { user: false, __v: false })
       .populate('vocabularies', { __v: false, words: false });
   }
 
-  async getFolder(folderId: string): Promise<GetFolderDto> {
+  async getFolder(folderId: Types.ObjectId): Promise<GetFolderDto> {
     return await this.folderModel
       .findById(folderId, { user: false, __v: false })
       .populate('vocabularies', { __v: false, words: false });
   }
 
-  async deleteFolder(folderId: string): Promise<void> {
+  async deleteFolder(folderId: Types.ObjectId): Promise<void> {
     // Delete all vocabularies in the folder
     const toDeleteVocab = await this.getFolder(folderId);
     for (const vocab of toDeleteVocab.vocabularies) {
@@ -79,7 +79,7 @@ export class VocabService {
     folder.vocabularies.push(new Types.ObjectId(vocabulary._id));
     await folder.save();
 
-    return this.getFolders(folder.user.toString());
+    return this.getFolders(folder.user);
   }
 
   async createWords(createWordDto: CreateWordsDto): Promise<void> {
@@ -150,7 +150,6 @@ export class VocabService {
     if (createProblemParam.randomOption) {
       words.sort(() => Math.random() - 0.5);
     }
-    console.log(words);
     return words;
   }
 }

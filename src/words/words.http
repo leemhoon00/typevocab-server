@@ -1,0 +1,21 @@
+@endpoint = http://localhost:3000
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGY4NmI5NTQwOGZmNDQ5MTFmMmFlNGQiLCJpYXQiOjE2OTQ1ODc0MTAsImV4cCI6MTY5NTE5MjIxMH0.aWhyUmbgE1VXcBq8mjiVNRDnwl9HlFNQ_JDb50M5AEw
+
+### POST /words - Create words
+POST {{endpoint}}/words
+Cookie: jwt={{jwt}}
+Content-Type: application/json
+
+{
+  "vocabularyId": "6505922e12c0a18b08041796",
+  "words": [
+    {
+      "word": "apple",
+      "meaning": "사과"
+    }
+  ]
+}
+
+### GET /words?vocabularyId=6505922e12c0a18b08041796 - Get words
+GET {{endpoint}}/words?vocabularyId=6505c6012eba9705d64a69b3
+Cookie: jwt={{jwt}}

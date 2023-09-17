@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateWordsDto, WordDto } from './words.dto';
 import { Types } from 'mongoose';
 import { Response } from 'express';
+import { MongoIdPipe } from 'src/common/validation.pipe';
 import {
   ApiTags,
   ApiCookieAuth,
@@ -22,6 +23,8 @@ import {
   ApiUnauthorizedResponse,
   ApiResponse,
   ApiBadRequestResponse,
+  ApiQuery,
+  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiTags('words')
@@ -44,24 +47,28 @@ export class WordsController {
 
   @ApiOperation({ summary: '단어 조회' })
   @ApiResponse({ status: 200, description: 'ok', type: [WordDto] })
+  @ApiQuery({
+    name: 'vocabularyId',
+    description: '단어장 아이디',
+    type: String,
+    example: '5f9e1c1b9d3b9a2b1c3b4d5e',
+  })
   @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(200)
   async findAllByVocabularyId(
-    @Query('vocabularyId') vocabularyId: Types.ObjectId,
+    @Query('vocabularyId', MongoIdPipe) vocabularyId: Types.ObjectId,
   ): Promise<WordDto[]> {
     return await this.wordsService.findAllByVocabularyId(vocabularyId);
   }
 
   @ApiOperation({ summary: '단어 발음' })
-  @ApiResponse({ status: 200, description: 'ok' })
+  @ApiParam({ name: 'word', type: String, example: 'apple' })
+  @ApiResponse({ status: 200, description: 'ok', type: ReadableStream })
   @UseGuards(JwtAuthGuard)
   @Get(':word')
   @HttpCode(200)
-  async speech(
-    @Param('word') word: string,
-    @Res() res: Response,
-  ): Promise<void> {
+  async speech(@Param('word') word: string, @Res() res: Response) {
     return await this.wordsService.speech(word, res);
   }
 }

@@ -24,6 +24,7 @@ import {
   ApiBadRequestResponse,
   ApiCookieAuth,
   ApiResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiTags('folders')
@@ -72,6 +73,12 @@ export class FoldersController {
   }
 
   @ApiOperation({ summary: '폴더 삭제' })
+  @ApiParam({
+    name: 'folderId',
+    description: '폴더 아이디',
+    type: String,
+    example: '5f2f4b4d6a6d4b4d6a6d4b4d',
+  })
   @ApiResponse({ status: 204, description: 'No Content' })
   @UseGuards(JwtAuthGuard)
   @Delete(':folderId')

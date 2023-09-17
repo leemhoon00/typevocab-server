@@ -11,6 +11,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { VocabulariesService } from './vocabularies.service';
 import { CreateVocabularyDto, CreateProblemsDto } from './vocabularies.dto';
 import { WordDto } from 'src/words/words.dto';
+import { MongoIdPipe } from 'src/common/validation.pipe';
 import {
   ApiTags,
   ApiOperation,
@@ -19,6 +20,7 @@ import {
   ApiBody,
   ApiCookieAuth,
   ApiResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 
@@ -32,10 +34,13 @@ export class VocabulariesController {
 
   @ApiOperation({ summary: '단어장 생성' })
   @ApiBody({ type: CreateVocabularyDto })
+  @ApiResponse({ status: 201, description: 'Created' })
   @Post()
   @UseGuards(JwtAuthGuard)
   @HttpCode(201)
-  async createVocabulary(@Body() createVocabularyDto: CreateVocabularyDto) {
+  async createVocabulary(
+    @Body() createVocabularyDto: CreateVocabularyDto,
+  ): Promise<void> {
     return await this.vocabulariesService.create(createVocabularyDto);
   }
 
@@ -53,11 +58,16 @@ export class VocabulariesController {
 
   @ApiOperation({ summary: '단어장 삭제' })
   @ApiResponse({ status: 204, description: 'No Content' })
+  @ApiParam({
+    name: 'vocabularyId',
+    type: String,
+    example: '5f9a1b9a1c9d440000d3e0a0',
+  })
   @Delete(':vocabularyId')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   async deleteVocabulary(
-    @Param('vocabularyId') vocabularyId: Types.ObjectId,
+    @Param('vocabularyId', MongoIdPipe) vocabularyId: Types.ObjectId,
   ): Promise<void> {
     return await this.vocabulariesService.delete(vocabularyId);
   }

@@ -4,8 +4,13 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class MongoIdPipe implements PipeTransform {
+  types = ['param', 'query'];
+  datas = ['folderId', 'vocabularyId', 'wordId'];
   transform(value: any, metadata: ArgumentMetadata) {
-    if (metadata.type !== 'param' || metadata.data !== 'folderId') {
+    if (
+      !this.types.includes(metadata.type) ||
+      !this.datas.includes(metadata.data)
+    ) {
       return value;
     }
 

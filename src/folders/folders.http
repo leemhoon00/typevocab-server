@@ -1,7 +1,7 @@
 @endpoint = http://localhost:3000
 @jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGY4NmI5NTQwOGZmNDQ5MTFmMmFlNGQiLCJpYXQiOjE2OTQ1ODc0MTAsImV4cCI6MTY5NTE5MjIxMH0.aWhyUmbgE1VXcBq8mjiVNRDnwl9HlFNQ_JDb50M5AEw
 
-### POST /folders - Create a new folder
+### 새 폴더 생성
 POST {{endpoint}}/folders HTTP/1.1
 Cookie: jwt={{jwt}}
 Content-Type: application/json
@@ -10,11 +10,11 @@ Content-Type: application/json
     "folderName": "foldername1"
 }
 
-### GET /folders - Get all folders
+### 폴더와 단어장 조회
 GET {{endpoint}}/folders HTTP/1.1
 Cookie: jwt={{jwt}}
 
 
-### DELETE /folders/:id - Delete a folder
+### 폴더 삭제
 DELETE {{endpoint}}/folders/123 HTTP/1.1
 Cookie: jwt={{jwt}}

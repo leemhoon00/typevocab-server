@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { UserDocument } from 'src/user/schemas/user.schema';
+import { UserDocument } from 'src/user/user.schema';
+
+import { UsersRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async kakaoLogin(id: string, res: Response) {
-    let user: UserDocument = await this.userService.findUserByKakaoId(id);
+    let user: UserDocument = await this.usersRepository.findUserByKakaoId(id);
     if (!user) {
-      user = await this.userService.create({
+      user = await this.usersRepository.create({
         id,
         provider: 'kakao',
       });

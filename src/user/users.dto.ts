@@ -29,16 +29,16 @@ export class UserInfoDto {
 }
 
 export class UpdateUserInfoDto {
-  @ApiProperty({ description: '유저 이름' })
+  @ApiProperty({ description: '유저 이름', example: '김코딩' })
   name: string;
 
-  @ApiProperty({ description: '유저 이메일' })
+  @ApiProperty({ description: '유저 이메일', example: 'example.kakao.com' })
   email: string;
 
-  @ApiProperty({ description: '유저 소개' })
+  @ApiProperty({ description: '유저 소개', example: '안녕하세요' })
   bio: string;
 
-  @ApiProperty({ description: '유저 회사' })
+  @ApiProperty({ description: '유저 회사', example: '카카오' })
   company: string;
 }
 

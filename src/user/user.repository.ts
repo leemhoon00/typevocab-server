@@ -15,13 +15,13 @@ export class UsersRepository {
     return createdUser.save();
   }
 
-  async findUserByKakaoId(id: string): Promise<UserDocument> {
-    return this.userModel.findOne({ id });
+  async findUserByKakaoId(kakaoId: string): Promise<UserDocument> {
+    return this.userModel.findOne({ id: kakaoId });
   }
 
-  async getUser(_id: Types.ObjectId): Promise<UserInfoDto> {
+  async getUserInfo(userId: Types.ObjectId): Promise<UserInfoDto> {
     return await this.userModel.findOne(
-      { _id },
+      { _id: userId },
       { _id: false, __v: false, id: false, provider: false },
     );
   }

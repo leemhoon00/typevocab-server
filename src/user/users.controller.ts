@@ -20,7 +20,6 @@ import { UserInfoDto, UpdateUserInfoDto, FileUploadDto } from './users.dto';
 import {
   ApiTags,
   ApiCookieAuth,
-  ApiOkResponse,
   ApiUnauthorizedResponse,
   ApiBody,
   ApiOperation,
@@ -75,23 +74,24 @@ export class UsersController {
 
   @ApiOperation({ summary: '유저 프로필 이미지 업로드' })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ description: '유저 프로필 이미지', type: FileUploadDto })
-  @ApiOkResponse({ description: 'ok' })
+  @ApiBody({ description: '이미지 파일', type: FileUploadDto })
+  @ApiResponse({ status: 201, description: '업로드 성공' })
   @UseGuards(JwtAuthGuard)
   @Post('image')
   @UseInterceptors(FileInterceptor('file'))
-  uploadProfileImage(
+  async uploadProfileImage(
     @Req() req: Request,
     @UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.usersService.uploadProfileImage(req.user._id, file);
+  ): Promise<void> {
+    return await this.usersService.uploadProfileImage(req.user._id, file);
   }
 
-  @ApiOperation({ summary: '유저 프로필 이미지 삭제' })
-  @ApiOkResponse({ description: 'ok' })
+  @ApiOperation({ summary: '유저 프로필 이미지 리셋' })
+  @ApiResponse({ status: 204, description: '이미지 삭제 성공' })
   @UseGuards(JwtAuthGuard)
   @Delete('image')
-  deleteProfileImage(@Req() req: Request) {
-    return this.usersService.deleteProfileImage(req.user._id);
+  @HttpCode(204)
+  async deleteProfileImage(@Req() req: Request): Promise<void> {
+    return await this.usersService.deleteProfileImage(req.user._id);
   }
 }

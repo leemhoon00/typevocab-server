@@ -27,19 +27,3 @@ export class FolderAndVocabulariesDto {
   @ApiProperty({ type: [VocabularyDto] })
   vocabularies: VocabularyDto[];
 }
-
-export class TempDto {
-  @ApiProperty()
-  temp: string;
-
-  @ApiProperty()
-  temp2: string;
-}
-
-export class TempDto2 extends TempDto {
-  @ApiProperty()
-  temp3: string;
-
-  @ApiProperty()
-  temp4: string;
-}

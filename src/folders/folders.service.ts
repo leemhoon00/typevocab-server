@@ -49,4 +49,14 @@ export class FoldersService {
     await this.foldersRepository.delete(folderId);
     return;
   }
+
+  async deleteAllFolders(userId: Types.ObjectId) {
+    const folders = await this.foldersRepository.findAllByUserId(userId);
+    await Promise.all(
+      folders.map(async (folder) => {
+        await this.delete(folder._id);
+      }),
+    );
+    return;
+  }
 }

@@ -68,6 +68,7 @@ export class UsersController {
   @ApiResponse({ status: 204, description: '유저 정보 삭제 성공' })
   @UseGuards(JwtAuthGuard)
   @Delete()
+  @HttpCode(204)
   async delete(@Req() req: Request, @Res() res: Response) {
     return this.usersService.deleteUser(req.user._id, res);
   }

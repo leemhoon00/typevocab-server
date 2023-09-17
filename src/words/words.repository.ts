@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Word } from './words.schema';
+import { Word } from './word.schema';
 import { CreateWordsDto, WordDto } from './words.dto';
 import { Types } from 'mongoose';
 

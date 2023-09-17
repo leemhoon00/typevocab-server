@@ -34,3 +34,8 @@ Content-Type: image/png
 # DELETE /user/image
 DELETE {{endpoint}}/user/image
 Cookie: jwt={{jwt}}
+
+
+### 유저 삭제
+DELETE {{endpoint}}/users
+Cookie: jwt={{jwt}}

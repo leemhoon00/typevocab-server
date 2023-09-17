@@ -1,4 +1,4 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersRepository } from './user.repository';
@@ -16,6 +16,7 @@ import {
   CloudFrontClient,
   CreateInvalidationCommand,
 } from '@aws-sdk/client-cloudfront';
+import { FoldersService } from 'src/folders/folders.service';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
     private readonly s3Client: S3Client,
     private readonly cfClient: CloudFrontClient,
+    private readonly foldersService: FoldersService,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
@@ -44,8 +46,8 @@ export class UsersService {
     if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
       await this.deleteS3Image(userId);
     }
+    await this.foldersService.deleteAllFolders(userId);
     await this.usersRepository.deleteUser(userId);
-
     res.clearCookie('jwt');
     res.clearCookie('isLoggedIn');
     return res.send();

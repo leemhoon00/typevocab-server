@@ -11,7 +11,7 @@ import {
   VocabularySchema,
 } from '../vocabularies/vocabulary.schema';
 import { WordsRepository } from '../words/words.repository';
-import { Word, WordSchema } from '../words/words.schema';
+import { Word, WordSchema } from '../words/word.schema';
 
 @Module({
   imports: [
@@ -28,5 +28,6 @@ import { Word, WordSchema } from '../words/words.schema';
     VocabulariesRepository,
     WordsRepository,
   ],
+  exports: [FoldersService, FoldersRepository],
 })
 export class FoldersModule {}

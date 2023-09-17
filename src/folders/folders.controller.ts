@@ -12,7 +12,11 @@ import {
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FoldersService } from './folders.service';
-import { CreateFolderBodyDto, FolderAndVocabulariesDto } from './folders.dto';
+import {
+  CreateFolderBodyDto,
+  FolderAndVocabulariesDto,
+  TempDto2,
+} from './folders.dto';
 import { Types } from 'mongoose';
 import { MongoIdPipe } from 'src/common/validation.pipe';
 
@@ -87,5 +91,12 @@ export class FoldersController {
     @Param('folderId', MongoIdPipe) folderId: Types.ObjectId,
   ): Promise<void> {
     return await this.foldersService.delete(folderId);
+  }
+
+  @ApiOperation({ summary: 'temp' })
+  @ApiBody({ type: TempDto2 })
+  @Post('temp')
+  async temp(): Promise<void> {
+    return;
   }
 }

@@ -22,7 +22,18 @@ export class AuthController {
   ) {}
 
   @ApiOperation({ summary: '카카오 로그인' })
-  @ApiResponse({ status: 301, description: '홈으로 리다이렉트' })
+  @ApiResponse({
+    status: 301,
+    description: '로그인 성공 / 홈으로 리다이렉트',
+    headers: {
+      'Set-Cookie': {
+        description: 'accessToken, refreshToken, isLoggedIn',
+        schema: {
+          type: 'string',
+        },
+      },
+    },
+  })
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
   @HttpCode(301)
@@ -37,7 +48,18 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '토큰 재발급' })
-  @ApiResponse({ status: 200, description: '토큰 재발급 성공' })
+  @ApiResponse({
+    status: 200,
+    description: '토큰 재발급 성공',
+    headers: {
+      'Set-Cookie': {
+        description: 'accessToken',
+        schema: {
+          type: 'string',
+        },
+      },
+    },
+  })
   @Get('refresh')
   @HttpCode(200)
   async refresh(@Req() req: Request, @Res() res: Response) {
@@ -45,7 +67,6 @@ export class AuthController {
       const newAccessToken = await this.authService.refresh(
         req.cookies?.refreshToken,
       );
-
       res.cookie('accessToken', newAccessToken, {
         httpOnly: true,
       });
@@ -59,7 +80,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '로그아웃' })
-  @ApiResponse({ status: 301, description: '홈으로 리다이렉트' })
+  @ApiResponse({ status: 301, description: '쿠키 삭제 후 홈으로 리다이렉트' })
   @Get('logout')
   @HttpCode(301)
   logout(@Res() res: Response) {

@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 import { VocabularyDto } from '../vocabularies/vocabularies.dto';
 
 export class CreateFolderBodyDto {
-  @ApiProperty({ example: '해커스 노랭이' })
+  @ApiProperty({ example: '해커스 노랭이', type: String })
   @IsString()
   folderName: string;
 }
@@ -16,14 +16,21 @@ export class CreateFolderDto extends CreateFolderBodyDto {
 }
 
 export class FolderAndVocabulariesDto {
-  @ApiProperty({ example: '6505922e12c0a18b08041796' })
+  @ApiProperty({
+    description: '폴더 아이디',
+    example: '60f0a9b0e0b9f3a9e8b0a0a0',
+    type: Types.ObjectId,
+  })
   @IsMongoId()
   _id: Types.ObjectId;
 
-  @ApiProperty({ example: '해커스 노랭이' })
+  @ApiProperty({
+    example: '해커스 노랭이',
+    type: String,
+  })
   @IsString()
   folderName: string;
 
-  @ApiProperty({ type: [VocabularyDto] })
+  @ApiProperty({ description: '단어장 목록', type: [VocabularyDto] })
   vocabularies: VocabularyDto[];
 }

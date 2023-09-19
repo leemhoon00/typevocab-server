@@ -64,7 +64,14 @@ export class WordsController {
 
   @ApiOperation({ summary: '단어 발음' })
   @ApiParam({ name: 'word', type: String, example: 'apple' })
-  @ApiResponse({ status: 200, description: 'ok', type: ReadableStream })
+  @ApiResponse({
+    status: 200,
+    description: 'ok',
+    type: ReadableStream,
+    headers: {
+      'Content-Type': { schema: { type: 'application/octet-stream' } },
+    },
+  })
   @UseGuards(JwtAuthGuard)
   @Get(':word')
   @HttpCode(200)

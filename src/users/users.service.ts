@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { UsersRepository } from './users.repository';
-import { UserInfoDto, UpdateUserInfoDto } from './users.dto';
+import { UserDto, UpdateUserInfoDto } from './users.dto';
 import { ConfigService } from '@nestjs/config';
 import {
   PutObjectCommand,
@@ -25,8 +25,8 @@ export class UsersService {
     private readonly foldersService: FoldersService,
   ) {}
 
-  async getUserInfo(_id: Types.ObjectId): Promise<UserInfoDto> {
-    return await this.usersRepository.getUserInfo(_id);
+  async getUserInfo(_id: Types.ObjectId): Promise<UserDto> {
+    return await this.usersRepository.getUser(_id);
   }
 
   async updateUserInfo(
@@ -38,7 +38,7 @@ export class UsersService {
   }
 
   async deleteUser(userId: Types.ObjectId) {
-    const user = await this.usersRepository.getUserInfo(userId);
+    const user = await this.usersRepository.getUser(userId);
     if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
       await this.deleteS3Image(userId);
     }
@@ -51,7 +51,7 @@ export class UsersService {
     userId: Types.ObjectId,
     file: Express.Multer.File,
   ): Promise<void> {
-    const user = await this.usersRepository.getUserInfo(userId);
+    const user = await this.usersRepository.getUser(userId);
     if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
       await this.deleteS3Image(userId);
     }
@@ -92,7 +92,7 @@ export class UsersService {
   }
 
   async deleteS3Image(userId: Types.ObjectId) {
-    const user = await this.usersRepository.getUserInfo(userId);
+    const user = await this.usersRepository.getUser(userId);
     const command = new DeleteObjectCommand({
       Bucket: this.configService.get('BUCKET_NAME'),
       Key: String('images/' + userId + extname(user.image)),

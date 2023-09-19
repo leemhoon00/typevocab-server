@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { UsersRepository } from './users.repository';
 import { UserInfoDto, UpdateUserInfoDto } from './users.dto';
-import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import {
   PutObjectCommand,
@@ -38,16 +37,14 @@ export class UsersService {
     return;
   }
 
-  async deleteUser(userId: Types.ObjectId, res: Response) {
+  async deleteUser(userId: Types.ObjectId) {
     const user = await this.usersRepository.getUserInfo(userId);
     if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
       await this.deleteS3Image(userId);
     }
     await this.foldersService.deleteAllFolders(userId);
     await this.usersRepository.deleteUser(userId);
-    res.clearCookie('jwt');
-    res.clearCookie('isLoggedIn');
-    return res.send();
+    return;
   }
 
   async uploadProfileImage(

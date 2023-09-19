@@ -69,6 +69,8 @@ export class WordsController {
   @Get(':word')
   @HttpCode(200)
   async speech(@Param('word') word: string, @Res() res: Response) {
-    return await this.wordsService.speech(word, res);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    const audioStream = await this.wordsService.speech(word);
+    return audioStream.pipe(res);
   }
 }

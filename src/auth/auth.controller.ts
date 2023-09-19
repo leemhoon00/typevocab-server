@@ -63,6 +63,9 @@ export class AuthController {
   @Get('logout')
   @HttpCode(301)
   logout(@Res() res: Response) {
-    return this.authService.logout(res);
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    res.clearCookie('isLoggedIn');
+    return res.redirect(this.configService.get('CLIENT_URL'));
   }
 }

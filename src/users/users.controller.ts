@@ -69,7 +69,10 @@ export class UsersController {
   @Delete()
   @HttpCode(204)
   async delete(@Req() req: Request, @Res() res: Response) {
-    return this.usersService.deleteUser(req.user.userId, res);
+    await this.usersService.deleteUser(req.user.userId);
+    res.clearCookie('jwt');
+    res.clearCookie('isLoggedIn');
+    return res.send();
   }
 
   @ApiOperation({ summary: '유저 프로필 이미지 업로드' })

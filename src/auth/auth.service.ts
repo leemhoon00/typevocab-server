@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { UserDocument } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
@@ -52,13 +51,11 @@ export class AuthService {
   }
 
   async refresh(refreshToken): Promise<string> {
-    // Verify refresh token
-    // JWT Refresh Token 검증 로직
     try {
       const decodedRefreshToken = this.jwtService.verify(refreshToken, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
       }) as Payload;
-      // Check if user exists
+
       const userId = decodedRefreshToken.userId;
       const user = (await this.usersRepository.getUserInfo(
         userId,
@@ -71,12 +68,5 @@ export class AuthService {
     } catch (err) {
       throw new UnauthorizedException('Invalid refresh-token');
     }
-  }
-
-  logout(res: Response): void {
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    res.clearCookie('isLoggedIn');
-    return res.redirect(this.configService.get('CLIENT_URL'));
   }
 }

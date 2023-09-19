@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { WordsRepository } from './words.repository';
 import { CreateWordsDto, WordDto } from './words.dto';
 import { Types } from 'mongoose';
-import { Response } from 'express';
 import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 
 @Injectable()
@@ -22,7 +21,7 @@ export class WordsService {
     return await this.wordsRepository.findAllByVocabularyId(vocabularyId);
   }
 
-  async speech(word: string, res: Response) {
+  async speech(word: string): Promise<any> {
     const command = new SynthesizeSpeechCommand({
       Engine: 'standard',
       LanguageCode: 'en-US',
@@ -33,8 +32,6 @@ export class WordsService {
     });
 
     const response = await this.pollyClient.send(command);
-    const audioStream = response.AudioStream as any;
-    res.setHeader('Content-Type', 'application/octet-stream');
-    return audioStream.pipe(res);
+    return response.AudioStream as any;
   }
 }

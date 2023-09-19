@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsEmail, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -11,7 +12,12 @@ export class CreateUserDto {
   readonly provider: string;
 }
 
-export class UserInfoDto {
+export class UserDto {
+  @ApiProperty({
+    description: '유저 아이디',
+    example: '60b9b0b9e6b3e9a9e0e9e9e9',
+    type: Types.ObjectId,
+  })
   @ApiProperty({ description: '유저 이름', example: '김코딩' })
   name: string;
 

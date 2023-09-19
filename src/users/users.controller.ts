@@ -16,7 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { Request, Response } from 'express';
-import { UserInfoDto, UpdateUserInfoDto } from './users.dto';
+import { UserDto, UpdateUserInfoDto } from './users.dto';
 import {
   ApiTags,
   ApiCookieAuth,
@@ -40,12 +40,12 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: '유저 정보 가져오기 성공',
-    type: UserInfoDto,
+    type: UserDto,
   })
   @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(200)
-  async getUserInfo(@Req() req: Request): Promise<UserInfoDto> {
+  async getUserInfo(@Req() req: Request): Promise<UserDto> {
     return await this.usersService.getUserInfo(req.user.userId);
   }
 

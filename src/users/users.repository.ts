@@ -1,7 +1,7 @@
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
-import { CreateUserDto, UserInfoDto, UpdateUserInfoDto } from './users.dto';
+import { CreateUserDto, UserDto, UpdateUserInfoDto } from './users.dto';
 
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
@@ -15,11 +15,8 @@ export class UsersRepository {
     return this.userModel.findOne({ kakaoId });
   }
 
-  async getUserInfo(userId: Types.ObjectId): Promise<UserInfoDto> {
-    return await this.userModel.findOne(
-      { _id: userId },
-      { __v: false, id: false, provider: false },
-    );
+  async getUser(userId: Types.ObjectId): Promise<UserDto> {
+    return await this.userModel.findOne({ _id: userId });
   }
 
   async updateUserInfo(

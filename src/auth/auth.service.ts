@@ -57,9 +57,7 @@ export class AuthService {
       }) as Payload;
 
       const userId = decodedRefreshToken.userId;
-      const user = (await this.usersRepository.getUserInfo(
-        userId,
-      )) as UserDocument;
+      const user = (await this.usersRepository.getUser(userId)) as UserDocument;
 
       // Generate new access token
       const accessToken = this.generateAccessToken(user);

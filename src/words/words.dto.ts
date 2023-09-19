@@ -5,27 +5,26 @@ import { Types } from 'mongoose';
 export class WordDto {
   @ApiProperty({
     type: Types.ObjectId,
-    description: 'Word ID',
     example: '5f9d2a3b9d9d9f9d9d9f9d9d',
   })
   @IsMongoId()
   _id: Types.ObjectId;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'apple', type: String })
   @IsAlpha()
   word: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '사과', type: String })
   @IsString()
   meaning: string;
 }
 
 export class CreateWordDto {
-  @ApiProperty({ description: 'Word', example: 'apple', type: String })
+  @ApiProperty({ example: 'apple', type: String })
   @IsAlpha()
   word: string;
 
-  @ApiProperty({ description: 'Meaning', example: '사과', type: String })
+  @ApiProperty({ example: '사과', type: String })
   @IsString()
   meaning: string;
 }
@@ -33,7 +32,6 @@ export class CreateWordDto {
 export class CreateWordsDto {
   @ApiProperty({
     type: Types.ObjectId,
-    description: 'Vocabulary ID',
     example: '5f9d2a3b9d9d9f9d9d9f9d9d',
   })
   @IsMongoId()

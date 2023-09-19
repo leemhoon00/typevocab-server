@@ -6,23 +6,19 @@ import { CreateUserDto, UserInfoDto, UpdateUserInfoDto } from './users.dto';
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  // async findUserById(userId: Types.ObjectId): Promise<UserDocument> {
-  //   return this.userModel.findOne({ _id: userId });
-  // }
-
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
 
-  async findUserByKakaoId(kakaoId: string): Promise<UserDocument> {
-    return this.userModel.findOne({ id: kakaoId });
+  async findUserByKakaoId(kakaoId: number): Promise<UserDocument> {
+    return this.userModel.findOne({ kakaoId });
   }
 
   async getUserInfo(userId: Types.ObjectId): Promise<UserInfoDto> {
     return await this.userModel.findOne(
       { _id: userId },
-      { _id: false, __v: false, id: false, provider: false },
+      { __v: false, id: false, provider: false },
     );
   }
 

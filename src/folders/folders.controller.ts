@@ -50,7 +50,7 @@ export class FoldersController {
     @Body() body: CreateFolderBodyDto,
   ): Promise<FolderAndVocabulariesDto[]> {
     return await this.foldersService.create({
-      userId: req.user._id,
+      userId: req.user.userId,
       folderName: body.folderName,
     });
   }
@@ -68,7 +68,7 @@ export class FoldersController {
     @Req() req: Request,
   ): Promise<FolderAndVocabulariesDto[]> {
     return await this.foldersService.findAllFoldersAndVocabulariesByUserId(
-      req.user._id,
+      req.user.userId,
     );
   }
 

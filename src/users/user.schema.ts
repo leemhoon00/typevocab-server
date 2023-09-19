@@ -5,25 +5,28 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({ versionKey: false })
 export class User {
-  @Prop({ required: true })
-  id: string;
+  @Prop({ required: true, type: Number })
+  kakaoId: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: String })
   provider: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: '', type: String })
   name: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: '', type: String })
   email: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: '', type: String })
   bio: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: '', type: String })
   company: string;
 
-  @Prop({ default: 'https://img.leemhoon00.com/default-image.png' })
+  @Prop({
+    default: 'https://img.leemhoon00.com/default-image.png',
+    type: String,
+  })
   image: string;
 }
 

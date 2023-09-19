@@ -4,8 +4,8 @@ import { Types } from 'mongoose';
 declare module 'express' {
   interface Request extends Req {
     user: {
-      id?: string;
-      _id?: Types.ObjectId;
+      kakaoId?: number;
+      userId?: Types.ObjectId;
     };
   }
 }

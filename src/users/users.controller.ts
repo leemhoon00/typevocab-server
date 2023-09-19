@@ -46,7 +46,7 @@ export class UsersController {
   @Get()
   @HttpCode(200)
   async getUserInfo(@Req() req: Request): Promise<UserInfoDto> {
-    return await this.usersService.getUserInfo(req.user._id);
+    return await this.usersService.getUserInfo(req.user.userId);
   }
 
   @ApiOperation({ summary: '유저 정보 수정하기' })
@@ -59,7 +59,7 @@ export class UsersController {
     @Req() req: Request,
     @Body() updateUserInfoDto: UpdateUserInfoDto,
   ) {
-    await this.usersService.updateUserInfo(req.user._id, updateUserInfoDto);
+    await this.usersService.updateUserInfo(req.user.userId, updateUserInfoDto);
     return;
   }
 
@@ -69,7 +69,7 @@ export class UsersController {
   @Delete()
   @HttpCode(204)
   async delete(@Req() req: Request, @Res() res: Response) {
-    return this.usersService.deleteUser(req.user._id, res);
+    return this.usersService.deleteUser(req.user.userId, res);
   }
 
   @ApiOperation({ summary: '유저 프로필 이미지 업로드' })
@@ -83,7 +83,7 @@ export class UsersController {
     @Req() req: Request,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
-    return await this.usersService.uploadProfileImage(req.user._id, file);
+    return await this.usersService.uploadProfileImage(req.user.userId, file);
   }
 
   @ApiOperation({ summary: '유저 프로필 이미지 리셋' })
@@ -92,6 +92,6 @@ export class UsersController {
   @Delete('image')
   @HttpCode(204)
   async deleteProfileImage(@Req() req: Request): Promise<void> {
-    return await this.usersService.deleteProfileImage(req.user._id);
+    return await this.usersService.deleteProfileImage(req.user.userId);
   }
 }

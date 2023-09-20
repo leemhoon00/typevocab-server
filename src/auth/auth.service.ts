@@ -5,6 +5,7 @@ import { UserDocument } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
 import { Payload } from './auth.interface';
 import * as bcrypt from 'bcrypt';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -92,5 +93,10 @@ export class AuthService {
     } catch (err) {
       throw new UnauthorizedException('Invalid refresh-token');
     }
+  }
+
+  async logout(userId: Types.ObjectId): Promise<void> {
+    await this.usersRepository.logout(userId);
+    return;
   }
 }

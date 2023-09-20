@@ -78,4 +78,12 @@ export class UsersRepository {
       _id: userId,
     });
   }
+
+  async logout(userId: Types.ObjectId): Promise<void> {
+    await this.userModel.updateOne(
+      { _id: userId },
+      { $set: { currentRefreshToken: null } },
+    );
+    return;
+  }
 }

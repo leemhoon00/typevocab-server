@@ -81,12 +81,14 @@ export class AuthController {
 
   @ApiOperation({ summary: '로그아웃' })
   @ApiResponse({ status: 301, description: '쿠키 삭제 후 홈으로 리다이렉트' })
+  @UseGuards(AuthGuard('jwt'))
   @Get('logout')
   @HttpCode(301)
-  logout(@Res() res: Response) {
+  async logout(@Req() req: Request, @Res() res: Response) {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.clearCookie('isLoggedIn');
+    await this.authService.logout(req.user.userId);
     return res.redirect(this.configService.get('CLIENT_URL'));
   }
 }

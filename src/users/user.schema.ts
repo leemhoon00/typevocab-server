@@ -28,6 +28,12 @@ export class User {
     type: String,
   })
   image: string;
+
+  @Prop({ default: false, type: Boolean, required: true, index: true })
+  like: boolean;
+
+  @Prop({ default: null, type: String || null })
+  currentRefreshToken: string | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

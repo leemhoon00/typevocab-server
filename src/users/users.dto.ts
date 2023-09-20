@@ -35,6 +35,9 @@ export class UserDto {
     type: String,
   })
   image: string;
+
+  @ApiProperty({ example: true, type: Boolean })
+  like: boolean;
 }
 
 export class UpdateUserInfoDto {

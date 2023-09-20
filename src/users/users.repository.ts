@@ -39,4 +39,8 @@ export class UsersRepository {
     await this.userModel.deleteOne({ _id: userId });
     return;
   }
+
+  async getLikesCount(): Promise<number> {
+    return await this.userModel.countDocuments({ like: true });
+  }
 }

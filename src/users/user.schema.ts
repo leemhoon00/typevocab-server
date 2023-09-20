@@ -28,6 +28,9 @@ export class User {
     type: String,
   })
   image: string;
+
+  @Prop({ default: false, type: Boolean, required: true, index: true })
+  like: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

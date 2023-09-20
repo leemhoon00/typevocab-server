@@ -100,4 +100,8 @@ export class UsersService {
     await this.s3Client.send(command);
     return;
   }
+
+  async getLikesCount(): Promise<number> {
+    return await this.usersRepository.getLikesCount();
+  }
 }

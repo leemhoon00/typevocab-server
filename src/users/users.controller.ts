@@ -97,4 +97,13 @@ export class UsersController {
   async deleteProfileImage(@Req() req: Request): Promise<void> {
     return await this.usersService.deleteProfileImage(req.user.userId);
   }
+
+  @ApiOperation({ summary: '좋아요 개수 (캐싱 예정)' })
+  @ApiResponse({ status: 200, description: '좋아요 개수 가져오기 성공' })
+  @UseGuards(JwtAuthGuard)
+  @Get('likes')
+  @HttpCode(200)
+  async getLikesCount(): Promise<number> {
+    return await this.usersService.getLikesCount();
+  }
 }

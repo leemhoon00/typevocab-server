@@ -3,7 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserDocument } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
-import { Payload } from './payload.interface';
+import { Payload } from './auth.interface';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -44,20 +45,45 @@ export class AuthService {
       userId: user._id,
     };
 
-    return this.jwtService.sign(payload, {
+    const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN'),
     });
+
+    const currentRefreshToken = await this.hash(refreshToken);
+
+    await this.usersRepository.setCurrentRefreshToken(
+      payload.userId,
+      currentRefreshToken,
+    );
+
+    return refreshToken;
   }
 
-  async refresh(refreshToken): Promise<string> {
+  async hash(refreshToken: string): Promise<string> {
+    const saltOrRounds = 10;
+    const currentRefreshToken = await bcrypt.hash(refreshToken, saltOrRounds);
+    return currentRefreshToken;
+  }
+
+  async refresh(refreshToken: string): Promise<string> {
     try {
       const decodedRefreshToken = this.jwtService.verify(refreshToken, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
       }) as Payload;
-
       const userId = decodedRefreshToken.userId;
-      const user = (await this.usersRepository.getUser(userId)) as UserDocument;
+
+      const user =
+        await this.usersRepository.getUserWithCurrentRefreshToken(userId);
+
+      const isRefreshTokenMatching = await bcrypt.compare(
+        refreshToken,
+        user.currentRefreshToken,
+      );
+
+      if (!isRefreshTokenMatching) {
+        throw new UnauthorizedException('Invalid refresh-token');
+      }
 
       // Generate new access token
       const accessToken = this.generateAccessToken(user);

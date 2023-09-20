@@ -16,7 +16,10 @@ export class UsersRepository {
   }
 
   async getUser(userId: Types.ObjectId): Promise<UserDto> {
-    return await this.userModel.findOne({ _id: userId });
+    return await this.userModel.findOne(
+      { _id: userId },
+      { currentRefreshToken: 0 },
+    );
   }
 
   async updateUserInfo(
@@ -55,5 +58,24 @@ export class UsersRepository {
   async unlike(userId: Types.ObjectId): Promise<void> {
     await this.userModel.updateOne({ _id: userId }, { $set: { like: false } });
     return;
+  }
+
+  async setCurrentRefreshToken(
+    userId: Types.ObjectId,
+    currentRefreshToken: string,
+  ): Promise<void> {
+    await this.userModel.updateOne(
+      { _id: userId },
+      { $set: { currentRefreshToken } },
+    );
+    return;
+  }
+
+  async getUserWithCurrentRefreshToken(
+    userId: Types.ObjectId,
+  ): Promise<UserDocument> {
+    return await this.userModel.findOne({
+      _id: userId,
+    });
   }
 }

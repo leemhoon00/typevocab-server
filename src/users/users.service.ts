@@ -104,4 +104,12 @@ export class UsersService {
   async getLikesCount(): Promise<number> {
     return await this.usersRepository.getLikesCount();
   }
+
+  async like(userId: Types.ObjectId): Promise<void> {
+    return await this.usersRepository.like(userId);
+  }
+
+  async unlike(userId: Types.ObjectId): Promise<void> {
+    return await this.usersRepository.unlike(userId);
+  }
 }

@@ -99,11 +99,33 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: '좋아요 개수 (캐싱 예정)' })
-  @ApiResponse({ status: 200, description: '좋아요 개수 가져오기 성공' })
+  @ApiResponse({
+    status: 200,
+    description: '좋아요 개수 가져오기 성공',
+    type: Number,
+  })
   @UseGuards(JwtAuthGuard)
   @Get('likes')
   @HttpCode(200)
   async getLikesCount(): Promise<number> {
     return await this.usersService.getLikesCount();
+  }
+
+  @ApiOperation({ summary: '좋아요' })
+  @ApiResponse({ status: 201, description: '좋아요' })
+  @UseGuards(JwtAuthGuard)
+  @Post('likes')
+  @HttpCode(201)
+  async like(@Req() req: Request): Promise<void> {
+    return await this.usersService.like(req.user.userId);
+  }
+
+  @ApiOperation({ summary: '좋아요 취소' })
+  @ApiResponse({ status: 204, description: '좋아요 취소' })
+  @UseGuards(JwtAuthGuard)
+  @Delete('likes')
+  @HttpCode(204)
+  async unlike(@Req() req: Request): Promise<void> {
+    return await this.usersService.unlike(req.user.userId);
   }
 }

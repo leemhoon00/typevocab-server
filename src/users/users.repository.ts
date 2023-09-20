@@ -22,7 +22,7 @@ export class UsersRepository {
   async updateUserInfo(
     userId: Types.ObjectId,
     updateUserInfoDto: UpdateUserInfoDto,
-  ) {
+  ): Promise<void> {
     await this.userModel.updateOne(
       { _id: userId },
       { $set: { ...updateUserInfoDto } },
@@ -30,17 +30,30 @@ export class UsersRepository {
     return;
   }
 
-  async updateProfileImage(userId: Types.ObjectId, image: string) {
+  async updateProfileImage(
+    userId: Types.ObjectId,
+    image: string,
+  ): Promise<void> {
     await this.userModel.updateOne({ _id: userId }, { $set: { image } });
     return;
   }
 
-  async deleteUser(userId: Types.ObjectId) {
+  async deleteUser(userId: Types.ObjectId): Promise<void> {
     await this.userModel.deleteOne({ _id: userId });
     return;
   }
 
   async getLikesCount(): Promise<number> {
     return await this.userModel.countDocuments({ like: true });
+  }
+
+  async like(userId: Types.ObjectId): Promise<void> {
+    await this.userModel.updateOne({ _id: userId }, { $set: { like: true } });
+    return;
+  }
+
+  async unlike(userId: Types.ObjectId): Promise<void> {
+    await this.userModel.updateOne({ _id: userId }, { $set: { like: false } });
+    return;
   }
 }

@@ -51,7 +51,7 @@ export class AuthService {
       expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN'),
     });
 
-    const currentRefreshToken = await this.hash(refreshToken);
+    const currentRefreshToken = await bcrypt.hash(refreshToken, 10);
 
     await this.usersRepository.setCurrentRefreshToken(
       payload.userId,
@@ -59,12 +59,6 @@ export class AuthService {
     );
 
     return refreshToken;
-  }
-
-  async hash(refreshToken: string): Promise<string> {
-    const saltOrRounds = 10;
-    const currentRefreshToken = await bcrypt.hash(refreshToken, saltOrRounds);
-    return currentRefreshToken;
   }
 
   async refresh(refreshToken: string): Promise<string> {

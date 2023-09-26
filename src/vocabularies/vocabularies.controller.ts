@@ -6,12 +6,12 @@ import {
   Param,
   Post,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { VocabulariesService } from './vocabularies.service';
 import { CreateVocabularyDto, CreateProblemsDto } from './vocabularies.dto';
 import { WordDto } from 'src/words/words.dto';
-import { UUIDPipe } from 'src/common/validation.pipe';
 import {
   ApiTags,
   ApiOperation,
@@ -66,7 +66,7 @@ export class VocabulariesController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   async deleteVocabulary(
-    @Param('vocabularyId', UUIDPipe) vocabularyId: string,
+    @Param('vocabularyId', ParseUUIDPipe) vocabularyId: string,
   ): Promise<void> {
     return await this.vocabulariesService.delete(vocabularyId);
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Vocabulary } from '@prisma/client';
+import { Vocabulary, Word } from '@prisma/client';
 import { CreateVocabularyDto } from './vocabularies.dto';
 
 @Injectable()
@@ -26,5 +26,11 @@ export class VocabulariesRepository {
   async deleteAllByFolderId(folderId: string): Promise<void> {
     await this.prisma.vocabulary.deleteMany({ where: { folderId } });
     return;
+  }
+
+  async createProblems(vocabularyIds: string[]): Promise<Word[]> {
+    return await this.prisma.word.findMany({
+      where: { vocabularyId: { in: vocabularyIds } },
+    });
   }
 }

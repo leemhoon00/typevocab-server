@@ -28,8 +28,8 @@ model User {
 model Folder {
   folderId      String    @id @default(uuid())
   folderName    String
-
   userId        Int
+  
   user          User      @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
   vocabularies  Vocabulary[]
 }
@@ -37,8 +37,8 @@ model Folder {
 model Vocabulary {
   vocabularyId    String    @id @default(uuid())
   vocabularyName  String
-
   folderId        String
+
   folder          Folder    @relation(fields: [folderId], references: [folderId], onDelete: Cascade, onUpdate: Cascade)
   words           Word[]
 }
@@ -47,7 +47,7 @@ model Word {
   wordId          String          @id @default(uuid())
   word            String
   meaning         String
-  
   vocabularyId    String
+
   vocabulary      Vocabulary      @relation(fields: [vocabularyId], references: [vocabularyId], onDelete: Cascade, onUpdate: Cascade)
 }

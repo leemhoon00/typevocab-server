@@ -8,13 +8,12 @@ import {
   Post,
   Get,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FoldersService } from './folders.service';
 import { CreateFolderBodyDto, FolderAndVocabulariesDto } from './folders.dto';
-import { Types } from 'mongoose';
-import { MongoIdPipe } from 'src/common/validation.pipe';
 
 import {
   ApiTags,
@@ -84,7 +83,7 @@ export class FoldersController {
   @Delete(':folderId')
   @HttpCode(204)
   async deleteFolder(
-    @Param('folderId', MongoIdPipe) folderId: Types.ObjectId,
+    @Param('folderId', ParseUUIDPipe) folderId: string,
   ): Promise<void> {
     return await this.foldersService.delete(folderId);
   }

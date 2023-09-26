@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@prisma/client';
 import { UsersRepository } from 'src/users/users.repository';
 import { Payload } from './auth.interface';
 import { UserDto } from 'src/users/users.dto';
@@ -30,16 +29,16 @@ export class AuthService {
     return user;
   }
 
-  generateAccessToken(user: UserDocument): string {
+  generateAccessToken(user: UserDto): string {
     const payload: Payload = {
-      userId: user._id,
+      userId: user.userId,
     };
     return this.jwtService.sign(payload);
   }
 
-  async generateRefreshToken(user: UserDocument): Promise<string> {
+  async generateRefreshToken(user: UserDto): Promise<string> {
     const payload: Payload = {
-      userId: user._id,
+      userId: user.userId,
     };
 
     const refreshToken = this.jwtService.sign(payload, {
@@ -85,7 +84,7 @@ export class AuthService {
     }
   }
 
-  async logout(userId: Types.ObjectId): Promise<void> {
+  async logout(userId: number): Promise<void> {
     await this.usersRepository.logout(userId);
     return;
   }

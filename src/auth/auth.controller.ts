@@ -39,7 +39,7 @@ export class AuthController {
   @HttpCode(301)
   async kakaoLogin(@Req() req: Request, @Res() res: Response) {
     const { accessToken, refreshToken } = await this.authService.getJWT(
-      req.user.kakaoId,
+      req.user.userId,
     );
     res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });

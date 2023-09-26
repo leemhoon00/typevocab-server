@@ -6,13 +6,10 @@ import { PassportModule } from '@nestjs/passport';
 import { KakaoStrategy } from './strategies/kakao.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     ConfigModule,
     PassportModule,
     JwtModule.registerAsync({

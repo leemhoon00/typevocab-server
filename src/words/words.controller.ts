@@ -8,13 +8,12 @@ import {
   Query,
   Param,
   Res,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { WordsService } from './words.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateWordsDto, WordDto } from './words.dto';
-import { Types } from 'mongoose';
 import { Response } from 'express';
-import { MongoIdPipe } from 'src/common/validation.pipe';
 import {
   ApiTags,
   ApiCookieAuth,
@@ -57,7 +56,7 @@ export class WordsController {
   @Get()
   @HttpCode(200)
   async findAllByVocabularyId(
-    @Query('vocabularyId', MongoIdPipe) vocabularyId: Types.ObjectId,
+    @Query('vocabularyId', ParseUUIDPipe) vocabularyId: string,
   ): Promise<WordDto[]> {
     return await this.wordsService.findAllByVocabularyId(vocabularyId);
   }

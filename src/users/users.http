@@ -1,41 +1,50 @@
 @endpoint = http://localhost:3000
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGY4NmI5NTQwOGZmNDQ5MTFmMmFlNGQiLCJpYXQiOjE2OTQ1ODc0MTAsImV4cCI6MTY5NTE5MjIxMH0.aWhyUmbgE1VXcBq8mjiVNRDnwl9HlFNQ_JDb50M5AEw
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTBhOWJkMzdkYTk3YzJkZTVkNDM0YjUiLCJpYXQiOjE2OTU2Mzc4MjEsImV4cCI6MTY5NTcyNDIyMX0.pKjA6aP2XW8lvR5-L8zKRFWvWJ73Mvs7WRu74yUl6eQ
 
 ### 유저 정보 가져오기
 GET {{endpoint}}/users
-Cookie: jwt={{jwt}}
+Cookie: accessToken={{accessToken}}
+
 
 ### 유저 정보 수정하기
 PUT {{endpoint}}/users
-Cookie: jwt={{jwt}}
+Cookie: accessToken={{accessToken}}
 Content-Type: application/json
 
 {
   "name": "홍길동",
-  "email": "leemhoon00@naver.com",
+  "email": "example@naver.com",
   "bio": "안녕하세요.",
-  "company": "우아한테크코스"
+  "company": "카카오"
 }
+
+
 
 ### 사진 업로드
 # POST /user/image
-POST {{endpoint}}/user/image
-Cookie: jwt={{jwt}}
-Content-Type: multipart/form-data; boundary=image-file-upload
+POST {{endpoint}}/users/image
+Cookie: accessToken={{accessToken}}
+Content-Type: multipart/form-data; boundary=image
 
---image-file-upload
+--image
 Content-Disposition: form-data; name="file"; filename="nodejs.png"
 Content-Type: image/png
 
 < ../../temp/nodejs.png
---image-file-upload--
+--image--
+
+
 
 ### 사진 삭제
 # DELETE /user/image
 DELETE {{endpoint}}/user/image
-Cookie: jwt={{jwt}}
+Cookie: accessToken={{accessToken}}
 
 
 ### 유저 삭제
 DELETE {{endpoint}}/users
-Cookie: jwt={{jwt}}
+Cookie: accessToken={{accessToken}}
+
+
+DELETE {{endpoint}}/user/image
+Cookie: accessToken={{accessToken}}

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Types } from 'mongoose';
 import { UsersRepository } from './users.repository';
 import { UserDto, UpdateUserInfoDto } from './users.dto';
 import { ConfigService } from '@nestjs/config';
@@ -13,7 +12,6 @@ import {
   CloudFrontClient,
   CreateInvalidationCommand,
 } from '@aws-sdk/client-cloudfront';
-import { FoldersService } from 'src/folders/folders.service';
 
 @Injectable()
 export class UsersService {
@@ -22,33 +20,28 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
     private readonly s3Client: S3Client,
     private readonly cfClient: CloudFrontClient,
-    private readonly foldersService: FoldersService,
   ) {}
 
-  async getUserInfo(_id: Types.ObjectId): Promise<UserDto> {
-    return await this.usersRepository.getUser(_id);
+  async getUserInfo(userId: string): Promise<UserDto> {
+    return await this.usersRepository.getUser(userId);
   }
 
-  async updateUserInfo(
-    userId: Types.ObjectId,
-    updateUserInfoDto: UpdateUserInfoDto,
-  ) {
+  async updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto) {
     await this.usersRepository.updateUserInfo(userId, updateUserInfoDto);
     return;
   }
 
-  async deleteUser(userId: Types.ObjectId) {
+  async deleteUser(userId: string) {
     const user = await this.usersRepository.getUser(userId);
     if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
       await this.deleteS3Image(userId);
     }
-    await this.foldersService.deleteAllFolders(userId);
     await this.usersRepository.deleteUser(userId);
     return;
   }
 
   async uploadProfileImage(
-    userId: Types.ObjectId,
+    userId: string,
     file: Express.Multer.File,
   ): Promise<void> {
     const user = await this.usersRepository.getUser(userId);
@@ -82,7 +75,7 @@ export class UsersService {
     return;
   }
 
-  async deleteProfileImage(userId: Types.ObjectId): Promise<void> {
+  async deleteProfileImage(userId: string): Promise<void> {
     await this.deleteS3Image(userId);
     await this.usersRepository.updateProfileImage(
       userId,
@@ -91,7 +84,7 @@ export class UsersService {
     return;
   }
 
-  async deleteS3Image(userId: Types.ObjectId) {
+  async deleteS3Image(userId: string) {
     const user = await this.usersRepository.getUser(userId);
     const command = new DeleteObjectCommand({
       Bucket: this.configService.get('BUCKET_NAME'),
@@ -105,11 +98,11 @@ export class UsersService {
     return await this.usersRepository.getLikesCount();
   }
 
-  async like(userId: Types.ObjectId): Promise<void> {
+  async like(userId: string): Promise<void> {
     return await this.usersRepository.like(userId);
   }
 
-  async unlike(userId: Types.ObjectId): Promise<void> {
+  async unlike(userId: string): Promise<void> {
     return await this.usersRepository.unlike(userId);
   }
 }

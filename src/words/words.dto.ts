@@ -1,14 +1,13 @@
-import { IsMongoId, IsArray, IsAlpha, IsString } from 'class-validator';
+import { IsArray, IsAlpha, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
 
 export class WordDto {
   @ApiProperty({
-    type: Types.ObjectId,
+    type: String,
     example: '5f9d2a3b9d9d9f9d9d9f9d9d',
   })
-  @IsMongoId()
-  _id: Types.ObjectId;
+  @IsUUID()
+  wordId: string;
 
   @ApiProperty({ example: 'apple', type: String })
   @IsAlpha()
@@ -31,11 +30,11 @@ export class CreateWordDto {
 
 export class CreateWordsDto {
   @ApiProperty({
-    type: Types.ObjectId,
+    type: String,
     example: '5f9d2a3b9d9d9f9d9d9f9d9d',
   })
-  @IsMongoId()
-  vocabularyId: Types.ObjectId;
+  @IsUUID()
+  vocabularyId: string;
 
   @ApiProperty({ type: [CreateWordDto], description: 'Array of words' })
   @IsArray()

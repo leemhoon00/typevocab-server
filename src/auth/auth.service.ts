@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserDocument } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
 import { Payload } from './auth.interface';
+import { UserDto } from 'src/users/users.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -14,35 +14,31 @@ export class AuthService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async getJWT(kakaoId: number) {
-    const user = await this.kakaoValidateUser(kakaoId);
+  async getJWT(userId: string) {
+    const user = await this.kakaoValidateUser(userId);
     const accessToken = this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
     return { accessToken, refreshToken };
   }
 
-  async kakaoValidateUser(kakaoId: number): Promise<UserDocument> {
-    let user: UserDocument =
-      await this.usersRepository.findUserByKakaoId(kakaoId);
+  async kakaoValidateUser(userId: string): Promise<UserDto> {
+    let user: UserDto = await this.usersRepository.getUser(userId);
     if (!user) {
-      user = await this.usersRepository.create({
-        kakaoId,
-        provider: 'kakao',
-      });
+      user = await this.usersRepository.create(userId);
     }
     return user;
   }
 
-  generateAccessToken(user: UserDocument): string {
+  generateAccessToken(user: UserDto): string {
     const payload: Payload = {
-      userId: user._id,
+      userId: user.userId,
     };
     return this.jwtService.sign(payload);
   }
 
-  async generateRefreshToken(user: UserDocument): Promise<string> {
+  async generateRefreshToken(user: UserDto): Promise<string> {
     const payload: Payload = {
-      userId: user._id,
+      userId: user.userId,
     };
 
     const refreshToken = this.jwtService.sign(payload, {
@@ -50,7 +46,7 @@ export class AuthService {
       expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN'),
     });
 
-    const currentRefreshToken = await this.hash(refreshToken);
+    const currentRefreshToken = await bcrypt.hash(refreshToken, 10);
 
     await this.usersRepository.setCurrentRefreshToken(
       payload.userId,
@@ -58,12 +54,6 @@ export class AuthService {
     );
 
     return refreshToken;
-  }
-
-  async hash(refreshToken: string): Promise<string> {
-    const saltOrRounds = 10;
-    const currentRefreshToken = await bcrypt.hash(refreshToken, saltOrRounds);
-    return currentRefreshToken;
   }
 
   async refresh(refreshToken: string): Promise<string> {
@@ -92,5 +82,10 @@ export class AuthService {
     } catch (err) {
       throw new UnauthorizedException('Invalid refresh-token');
     }
+  }
+
+  async logout(userId: string): Promise<void> {
+    await this.usersRepository.logout(userId);
+    return;
   }
 }

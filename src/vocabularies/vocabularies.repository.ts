@@ -1,35 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Vocabulary, VocabularyDocument } from './vocabulary.schema';
+import { PrismaService } from '../prisma/prisma.service';
+import { Vocabulary, Word } from '@prisma/client';
 import { CreateVocabularyDto } from './vocabularies.dto';
 
 @Injectable()
 export class VocabulariesRepository {
-  constructor(
-    @InjectModel(Vocabulary.name)
-    private vocabularyModel: Model<VocabularyDocument>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(createVocabularyDto: CreateVocabularyDto): Promise<void> {
-    const createdVocabulary = new this.vocabularyModel(createVocabularyDto);
-    await createdVocabulary.save();
+    await this.prisma.vocabulary.create({ data: createVocabularyDto });
     return;
   }
 
-  async findAllbyFolderId(
-    folderId: Types.ObjectId,
-  ): Promise<VocabularyDocument[]> {
-    return this.vocabularyModel.find({ folderId }).exec();
+  async findAllbyFolderId(folderId: string): Promise<Vocabulary[]> {
+    return await this.prisma.vocabulary.findMany({
+      where: { folderId },
+    });
   }
 
-  async delete(vocabularyId: Types.ObjectId): Promise<void> {
-    await this.vocabularyModel.deleteOne({ _id: vocabularyId }).exec();
+  async delete(vocabularyId: string): Promise<void> {
+    await this.prisma.vocabulary.delete({ where: { vocabularyId } });
     return;
   }
 
-  async deleteAllByFolderId(folderId: Types.ObjectId): Promise<void> {
-    this.vocabularyModel.deleteMany({ folderId }).exec();
+  async deleteAllByFolderId(folderId: string): Promise<void> {
+    await this.prisma.vocabulary.deleteMany({ where: { folderId } });
     return;
+  }
+
+  async createProblems(vocabularyIds: string[]): Promise<Word[]> {
+    return await this.prisma.word.findMany({
+      where: { vocabularyId: { in: vocabularyIds } },
+    });
   }
 }

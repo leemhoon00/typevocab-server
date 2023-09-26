@@ -1,81 +1,95 @@
-import { Model, Types } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './user.schema';
-import { CreateUserDto, UserDto, UpdateUserInfoDto } from './users.dto';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { User } from '@prisma/client';
+import { UserDto, UpdateUserInfoDto } from './users.dto';
 
+@Injectable()
 export class UsersRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
-    const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+  async create(userId: string): Promise<User> {
+    return await this.prisma.user.create({ data: { userId } });
   }
 
-  async findUserByKakaoId(kakaoId: number): Promise<UserDocument> {
-    return this.userModel.findOne({ kakaoId });
-  }
-
-  async getUser(userId: Types.ObjectId): Promise<UserDto> {
-    return await this.userModel.findOne(
-      { _id: userId },
-      { currentRefreshToken: 0 },
-    );
+  async getUser(userId: string): Promise<UserDto> {
+    return await this.prisma.user.findUnique({
+      where: { userId: userId },
+      select: {
+        userId: true,
+        name: true,
+        email: true,
+        bio: true,
+        company: true,
+        image: true,
+        like: true,
+      },
+    });
   }
 
   async updateUserInfo(
-    userId: Types.ObjectId,
+    userId: string,
     updateUserInfoDto: UpdateUserInfoDto,
   ): Promise<void> {
-    await this.userModel.updateOne(
-      { _id: userId },
-      { $set: { ...updateUserInfoDto } },
-    );
+    await this.prisma.user.update({
+      where: { userId },
+      data: updateUserInfoDto,
+    });
     return;
   }
 
-  async updateProfileImage(
-    userId: Types.ObjectId,
-    image: string,
-  ): Promise<void> {
-    await this.userModel.updateOne({ _id: userId }, { $set: { image } });
+  async updateProfileImage(userId: string, image: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { image },
+    });
     return;
   }
 
-  async deleteUser(userId: Types.ObjectId): Promise<void> {
-    await this.userModel.deleteOne({ _id: userId });
-    return;
+  async deleteUser(userId: string): Promise<void> {
+    await this.prisma.user.delete({ where: { userId } });
   }
 
   async getLikesCount(): Promise<number> {
-    return await this.userModel.countDocuments({ like: true });
+    return await this.prisma.user.count({ where: { like: true } });
   }
 
-  async like(userId: Types.ObjectId): Promise<void> {
-    await this.userModel.updateOne({ _id: userId }, { $set: { like: true } });
+  async like(userId: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { like: true },
+    });
     return;
   }
 
-  async unlike(userId: Types.ObjectId): Promise<void> {
-    await this.userModel.updateOne({ _id: userId }, { $set: { like: false } });
-    return;
+  async unlike(userId: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { like: false },
+    });
   }
 
   async setCurrentRefreshToken(
-    userId: Types.ObjectId,
+    userId: string,
     currentRefreshToken: string,
   ): Promise<void> {
-    await this.userModel.updateOne(
-      { _id: userId },
-      { $set: { currentRefreshToken } },
-    );
+    await this.prisma.user.update({
+      where: { userId },
+      data: { currentRefreshToken },
+    });
     return;
   }
 
-  async getUserWithCurrentRefreshToken(
-    userId: Types.ObjectId,
-  ): Promise<UserDocument> {
-    return await this.userModel.findOne({
-      _id: userId,
+  async getUserWithCurrentRefreshToken(userId: string): Promise<User> {
+    return await this.prisma.user.findUnique({
+      where: { userId },
     });
+  }
+
+  async logout(userId: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { currentRefreshToken: null },
+    });
+    return;
   }
 }

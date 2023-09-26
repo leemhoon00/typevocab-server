@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { VocabulariesRepository } from './vocabularies.repository';
 import { CreateVocabularyDto, CreateProblemsDto } from './vocabularies.dto';
-import { Types } from 'mongoose';
 
 import { WordsRepository } from 'src/words/words.repository';
 import { WordDto } from 'src/words/words.dto';
@@ -31,8 +30,7 @@ export class VocabulariesService {
     return result;
   }
 
-  async delete(vocabularyId: Types.ObjectId) {
-    await this.wordsRepository.deleteAllByVocabularyId(vocabularyId);
+  async delete(vocabularyId: string) {
     await this.vocabulariesRepository.delete(vocabularyId);
     return;
   }

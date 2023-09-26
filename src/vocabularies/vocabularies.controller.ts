@@ -11,7 +11,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { VocabulariesService } from './vocabularies.service';
 import { CreateVocabularyDto, CreateProblemsDto } from './vocabularies.dto';
 import { WordDto } from 'src/words/words.dto';
-import { MongoIdPipe } from 'src/common/validation.pipe';
+import { UUIDPipe } from 'src/common/validation.pipe';
 import {
   ApiTags,
   ApiOperation,
@@ -22,7 +22,6 @@ import {
   ApiResponse,
   ApiParam,
 } from '@nestjs/swagger';
-import { Types } from 'mongoose';
 
 @ApiTags('vocabularies')
 @ApiCookieAuth('jwt')
@@ -67,7 +66,7 @@ export class VocabulariesController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   async deleteVocabulary(
-    @Param('vocabularyId', MongoIdPipe) vocabularyId: Types.ObjectId,
+    @Param('vocabularyId', UUIDPipe) vocabularyId: string,
   ): Promise<void> {
     return await this.vocabulariesService.delete(vocabularyId);
   }

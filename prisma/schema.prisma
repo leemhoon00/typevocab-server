@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId              String    @id @default(uuid())
+  kakaoId             Int       @unique
+  name                String    @default("")
+  email               String    @default("")
+  bio                 String    @default("")
+  company             String    @default("")
+  image               String    @default("https://img.leemhoon00.com/default-image.png")
+  like                Boolean   @default(false)
+  currentRefreshToken String?
+
+  folders             Folder[]
+
+  @@index([like])
+}
+
+model Folder {
+  folderId      String    @id @default(uuid())
+  folderName    String
+
+  userId        String
+  user          User      @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  vocabularies  Vocabulary[]
+}
+
+model Vocabulary {
+  vocabularyId    String    @id @default(uuid())
+  vocabularyName  String
+
+  folderId        String
+  folder          Folder    @relation(fields: [folderId], references: [folderId], onDelete: Cascade, onUpdate: Cascade)
+  words           Word[]
+}
+
+model Word {
+  wordId          String          @id @default(uuid())
+  word            String
+  meaning         String
+  
+  vocabularyId    String
+  vocabulary      Vocabulary      @relation(fields: [vocabularyId], references: [vocabularyId], onDelete: Cascade, onUpdate: Cascade)
+}

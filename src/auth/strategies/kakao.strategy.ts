@@ -22,7 +22,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     try {
       const { _json } = profile;
       const user = {
-        userId: _json.id as string,
+        userId: _json.id.toString(),
       };
       done(null, user);
     } catch (error) {

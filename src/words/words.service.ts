@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { WordsRepository } from './words.repository';
 import { CreateWordsDto, WordDto } from './words.dto';
-import { Types } from 'mongoose';
 import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 
 @Injectable()
@@ -15,9 +14,7 @@ export class WordsService {
     return this.wordsRepository.create(createWordsDto);
   }
 
-  async findAllByVocabularyId(
-    vocabularyId: Types.ObjectId,
-  ): Promise<WordDto[]> {
+  async findAllByVocabularyId(vocabularyId: string): Promise<WordDto[]> {
     return await this.wordsRepository.findAllByVocabularyId(vocabularyId);
   }
 

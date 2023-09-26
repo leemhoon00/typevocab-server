@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Vocabulary, VocabularyDocument } from './vocabulary.schema';
 import { CreateVocabularyDto } from './vocabularies.dto';
 
 @Injectable()

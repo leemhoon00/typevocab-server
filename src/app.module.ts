@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
-// import { FoldersModule } from './folders/folders.module';
-// import { VocabulariesModule } from './vocabularies/vocabularies.module';
-// import { WordsModule } from './words/words.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { FoldersModule } from './folders/folders.module';
+import { VocabulariesModule } from './vocabularies/vocabularies.module';
+import { WordsModule } from './words/words.module';
 
 @Module({
   imports: [
@@ -17,9 +18,10 @@ import { ConfigModule } from '@nestjs/config';
       expandVariables: true,
       cache: true,
     }),
-    // FoldersModule,
-    // VocabulariesModule,
-    // WordsModule,
+    PrismaModule,
+    FoldersModule,
+    VocabulariesModule,
+    WordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

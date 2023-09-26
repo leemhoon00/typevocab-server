@@ -1,20 +1,19 @@
-import { IsMongoId, IsString, IsBoolean } from 'class-validator';
+import { IsUUID, IsString, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
 
 export class VocabularyDto {
   @ApiProperty({
     example: '6505922e12c0a18b08041796',
-    type: Types.ObjectId,
+    type: String,
     description: '단어장 아이디',
   })
-  @IsMongoId()
-  _id: Types.ObjectId;
+  @IsUUID()
+  vocabularyId: string;
 
-  @ApiProperty({ example: '6505922e12c0a18b08041796', type: Types.ObjectId })
-  @IsMongoId()
-  folderId: Types.ObjectId;
+  @ApiProperty({ example: '6505922e12c0a18b08041796', type: String })
+  @IsUUID()
+  folderId: string;
 
   @ApiProperty({ example: 'Day-1', type: String })
   @IsString()
@@ -22,8 +21,8 @@ export class VocabularyDto {
 }
 
 export class CreateVocabularyDto {
-  @ApiProperty({ example: '6505922e12c0a18b08041796', type: Types.ObjectId })
-  @IsMongoId()
+  @ApiProperty({ example: '6505922e12c0a18b08041796', type: String })
+  @IsUUID()
   folderId: string;
 
   @ApiProperty({ example: 'Day-1', type: String })
@@ -39,8 +38,8 @@ export class CreateProblemsDto {
 
   @ApiProperty({
     example: ['6505922e12c0a18b08041796'],
-    type: [Types.ObjectId],
+    type: [String],
   })
-  @IsMongoId({ each: true })
-  vocabularyIds: Types.ObjectId[];
+  @IsUUID('all', { each: true })
+  vocabularyIds: string[];
 }

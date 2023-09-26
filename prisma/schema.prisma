@@ -11,8 +11,7 @@ datasource db {
 }
 
 model User {
-  userId              String    @id @default(uuid())
-  kakaoId             Int       @unique
+  userId              Int       @id
   name                String    @default("")
   email               String    @default("")
   bio                 String    @default("")
@@ -30,7 +29,7 @@ model Folder {
   folderId      String    @id @default(uuid())
   folderName    String
 
-  userId        String
+  userId        Int
   user          User      @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
   vocabularies  Vocabulary[]
 }

@@ -1,15 +1,4 @@
-import { IsNotEmpty, IsEmail, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
-export class CreateUserDto {
-  @IsNotEmpty()
-  @IsNumber()
-  readonly kakaoId: number;
-
-  @IsNotEmpty()
-  @IsEmail()
-  readonly provider: string;
-}
 
 export class UserDto {
   @ApiProperty({ example: '김코딩', type: String })

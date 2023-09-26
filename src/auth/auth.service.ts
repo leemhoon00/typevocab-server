@@ -1,11 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserDocument } from 'src/users/user.schema';
+import { User } from '@prisma/client';
 import { UsersRepository } from 'src/users/users.repository';
 import { Payload } from './auth.interface';
+import { UserDto } from 'src/users/users.dto';
 import * as bcrypt from 'bcrypt';
-import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -15,21 +15,17 @@ export class AuthService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async getJWT(kakaoId: number) {
-    const user = await this.kakaoValidateUser(kakaoId);
+  async getJWT(userId: number) {
+    const user = await this.kakaoValidateUser(userId);
     const accessToken = this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
     return { accessToken, refreshToken };
   }
 
-  async kakaoValidateUser(kakaoId: number): Promise<UserDocument> {
-    let user: UserDocument =
-      await this.usersRepository.findUserByKakaoId(kakaoId);
+  async kakaoValidateUser(userId: number): Promise<UserDto> {
+    let user: UserDto = await this.usersRepository.getUser(userId);
     if (!user) {
-      user = await this.usersRepository.create({
-        kakaoId,
-        provider: 'kakao',
-      });
+      user = await this.usersRepository.create(userId);
     }
     return user;
   }

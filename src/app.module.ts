@@ -11,9 +11,9 @@ import { WordsModule } from './words/words.module';
   imports: [
     AuthModule,
     UsersModule,
-    FoldersModule,
-    VocabulariesModule,
-    WordsModule,
+    // FoldersModule,
+    // VocabulariesModule,
+    // WordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

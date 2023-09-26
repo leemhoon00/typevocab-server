@@ -27,9 +27,4 @@ export class WordsRepository {
       select: { wordId: true, word: true, meaning: true },
     });
   }
-
-  async deleteAllByVocabularyId(vocabularyId: string): Promise<void> {
-    await this.prisma.word.deleteMany({ where: { vocabularyId } });
-    return;
-  }
 }

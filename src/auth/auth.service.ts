@@ -14,14 +14,14 @@ export class AuthService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async getJWT(userId: number) {
+  async getJWT(userId: string) {
     const user = await this.kakaoValidateUser(userId);
     const accessToken = this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
     return { accessToken, refreshToken };
   }
 
-  async kakaoValidateUser(userId: number): Promise<UserDto> {
+  async kakaoValidateUser(userId: string): Promise<UserDto> {
     let user: UserDto = await this.usersRepository.getUser(userId);
     if (!user) {
       user = await this.usersRepository.create(userId);
@@ -84,7 +84,7 @@ export class AuthService {
     }
   }
 
-  async logout(userId: number): Promise<void> {
+  async logout(userId: string): Promise<void> {
     await this.usersRepository.logout(userId);
     return;
   }

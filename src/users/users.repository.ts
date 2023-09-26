@@ -1,15 +1,17 @@
-import { PrismaService } from '../prisma.service';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { UserDto, UpdateUserInfoDto } from './users.dto';
 
+@Injectable()
 export class UsersRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(userId: number): Promise<User> {
+  async create(userId: string): Promise<User> {
     return await this.prisma.user.create({ data: { userId } });
   }
 
-  async getUser(userId: number): Promise<UserDto> {
+  async getUser(userId: string): Promise<UserDto> {
     return await this.prisma.user.findUnique({
       where: { userId: userId },
       select: {
@@ -25,7 +27,7 @@ export class UsersRepository {
   }
 
   async updateUserInfo(
-    userId: number,
+    userId: string,
     updateUserInfoDto: UpdateUserInfoDto,
   ): Promise<void> {
     await this.prisma.user.update({
@@ -35,7 +37,7 @@ export class UsersRepository {
     return;
   }
 
-  async updateProfileImage(userId: number, image: string): Promise<void> {
+  async updateProfileImage(userId: string, image: string): Promise<void> {
     await this.prisma.user.update({
       where: { userId },
       data: { image },
@@ -43,7 +45,7 @@ export class UsersRepository {
     return;
   }
 
-  async deleteUser(userId: number): Promise<void> {
+  async deleteUser(userId: string): Promise<void> {
     await this.prisma.user.delete({ where: { userId } });
   }
 
@@ -51,7 +53,7 @@ export class UsersRepository {
     return await this.prisma.user.count({ where: { like: true } });
   }
 
-  async like(userId: number): Promise<void> {
+  async like(userId: string): Promise<void> {
     await this.prisma.user.update({
       where: { userId },
       data: { like: true },
@@ -59,7 +61,7 @@ export class UsersRepository {
     return;
   }
 
-  async unlike(userId: number): Promise<void> {
+  async unlike(userId: string): Promise<void> {
     await this.prisma.user.update({
       where: { userId },
       data: { like: false },
@@ -67,7 +69,7 @@ export class UsersRepository {
   }
 
   async setCurrentRefreshToken(
-    userId: number,
+    userId: string,
     currentRefreshToken: string,
   ): Promise<void> {
     await this.prisma.user.update({
@@ -77,13 +79,13 @@ export class UsersRepository {
     return;
   }
 
-  async getUserWithCurrentRefreshToken(userId: number): Promise<User> {
+  async getUserWithCurrentRefreshToken(userId: string): Promise<User> {
     return await this.prisma.user.findUnique({
       where: { userId },
     });
   }
 
-  async logout(userId: number): Promise<void> {
+  async logout(userId: string): Promise<void> {
     await this.prisma.user.update({
       where: { userId },
       data: { currentRefreshToken: null },

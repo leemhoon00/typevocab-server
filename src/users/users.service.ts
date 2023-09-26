@@ -22,16 +22,16 @@ export class UsersService {
     private readonly cfClient: CloudFrontClient,
   ) {}
 
-  async getUserInfo(userId: number): Promise<UserDto> {
+  async getUserInfo(userId: string): Promise<UserDto> {
     return await this.usersRepository.getUser(userId);
   }
 
-  async updateUserInfo(userId: number, updateUserInfoDto: UpdateUserInfoDto) {
+  async updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto) {
     await this.usersRepository.updateUserInfo(userId, updateUserInfoDto);
     return;
   }
 
-  async deleteUser(userId: number) {
+  async deleteUser(userId: string) {
     const user = await this.usersRepository.getUser(userId);
     if (user.image !== this.configService.get('DEFAULT_IMAGE')) {
       await this.deleteS3Image(userId);
@@ -41,7 +41,7 @@ export class UsersService {
   }
 
   async uploadProfileImage(
-    userId: number,
+    userId: string,
     file: Express.Multer.File,
   ): Promise<void> {
     const user = await this.usersRepository.getUser(userId);
@@ -75,7 +75,7 @@ export class UsersService {
     return;
   }
 
-  async deleteProfileImage(userId: number): Promise<void> {
+  async deleteProfileImage(userId: string): Promise<void> {
     await this.deleteS3Image(userId);
     await this.usersRepository.updateProfileImage(
       userId,
@@ -84,7 +84,7 @@ export class UsersService {
     return;
   }
 
-  async deleteS3Image(userId: number) {
+  async deleteS3Image(userId: string) {
     const user = await this.usersRepository.getUser(userId);
     const command = new DeleteObjectCommand({
       Bucket: this.configService.get('BUCKET_NAME'),
@@ -98,11 +98,11 @@ export class UsersService {
     return await this.usersRepository.getLikesCount();
   }
 
-  async like(userId: number): Promise<void> {
+  async like(userId: string): Promise<void> {
     return await this.usersRepository.like(userId);
   }
 
-  async unlike(userId: number): Promise<void> {
+  async unlike(userId: string): Promise<void> {
     return await this.usersRepository.unlike(userId);
   }
 }

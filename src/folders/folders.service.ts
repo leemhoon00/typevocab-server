@@ -21,7 +21,7 @@ export class FoldersService {
     return this.foldersRepository.findAllFoldersAndVocabulariesByUserId(userId);
   }
 
-  async delete(folderId: string): Promise<void> {
+  async delete(folderId: number): Promise<void> {
     await this.foldersRepository.delete(folderId);
     return;
   }

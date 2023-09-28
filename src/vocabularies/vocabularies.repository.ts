@@ -12,12 +12,12 @@ export class VocabulariesRepository {
     return;
   }
 
-  async delete(vocabularyId: string): Promise<void> {
+  async delete(vocabularyId: number): Promise<void> {
     await this.prisma.vocabulary.delete({ where: { vocabularyId } });
     return;
   }
 
-  async createProblems(vocabularyIds: string[]): Promise<Word[]> {
+  async createProblems(vocabularyIds: number[]): Promise<Word[]> {
     return await this.prisma.word.findMany({
       where: { vocabularyId: { in: vocabularyIds } },
     });

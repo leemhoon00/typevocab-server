@@ -1,19 +1,15 @@
-import { IsUUID, IsString, IsBoolean } from 'class-validator';
+import { IsNumber, IsString, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class VocabularyDto {
-  @ApiProperty({
-    example: '6505922e12c0a18b08041796',
-    type: String,
-    description: '단어장 아이디',
-  })
-  @IsUUID()
-  vocabularyId: string;
+  @ApiProperty({ example: 11, type: Number })
+  @IsNumber()
+  vocabularyId: number;
 
-  @ApiProperty({ example: '6505922e12c0a18b08041796', type: String })
-  @IsUUID()
-  folderId: string;
+  @ApiProperty({ example: 11, type: Number })
+  @IsNumber()
+  folderId: number;
 
   @ApiProperty({ example: 'Day-1', type: String })
   @IsString()
@@ -21,9 +17,9 @@ export class VocabularyDto {
 }
 
 export class CreateVocabularyDto {
-  @ApiProperty({ example: '6505922e12c0a18b08041796', type: String })
-  @IsUUID()
-  folderId: string;
+  @ApiProperty({ example: 11, type: Number })
+  @IsNumber()
+  folderId: number;
 
   @ApiProperty({ example: 'Day-1', type: String })
   @IsString()
@@ -37,9 +33,9 @@ export class CreateProblemsDto {
   isRandom: boolean;
 
   @ApiProperty({
-    example: ['6505922e12c0a18b08041796'],
-    type: [String],
+    example: [11, 12, 13],
+    type: [Number],
   })
-  @IsUUID('all', { each: true })
-  vocabularyIds: string[];
+  @IsNumber({}, { each: true })
+  vocabularyIds: number[];
 }

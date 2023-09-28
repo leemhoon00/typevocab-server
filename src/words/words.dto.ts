@@ -1,13 +1,13 @@
-import { IsArray, IsAlpha, IsString, IsUUID } from 'class-validator';
+import { IsArray, IsAlpha, IsString, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class WordDto {
   @ApiProperty({
-    type: String,
-    example: '5f9d2a3b9d9d9f9d9d9f9d9d',
+    type: Number,
+    example: 11,
   })
-  @IsUUID()
-  wordId: string;
+  @IsInt()
+  wordId: number;
 
   @ApiProperty({ example: 'apple', type: String })
   @IsAlpha()
@@ -30,11 +30,11 @@ export class CreateWordDto {
 
 export class CreateWordsDto {
   @ApiProperty({
-    type: String,
-    example: '5f9d2a3b9d9d9f9d9d9f9d9d',
+    type: Number,
+    example: 11,
   })
-  @IsUUID()
-  vocabularyId: string;
+  @IsInt()
+  vocabularyId: number;
 
   @ApiProperty({ type: [CreateWordDto], description: 'Array of words' })
   @IsArray()

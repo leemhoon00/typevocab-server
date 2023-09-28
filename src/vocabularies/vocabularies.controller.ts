@@ -6,7 +6,7 @@ import {
   Param,
   Post,
   Delete,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { VocabulariesService } from './vocabularies.service';
@@ -59,14 +59,14 @@ export class VocabulariesController {
   @ApiResponse({ status: 204, description: 'No Content' })
   @ApiParam({
     name: 'vocabularyId',
-    type: String,
-    example: '5f9a1b9a1c9d440000d3e0a0',
+    type: Number,
+    example: 11,
   })
   @Delete(':vocabularyId')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   async deleteVocabulary(
-    @Param('vocabularyId', ParseUUIDPipe) vocabularyId: string,
+    @Param('vocabularyId', ParseIntPipe) vocabularyId: number,
   ): Promise<void> {
     return await this.vocabulariesService.delete(vocabularyId);
   }

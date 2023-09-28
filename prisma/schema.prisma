@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  userId              Int       @id
+  userId              String    @id
   name                String    @default("")
   email               String    @default("")
   bio                 String    @default("")
@@ -26,28 +26,28 @@ model User {
 }
 
 model Folder {
-  folderId      String    @id @default(uuid())
+  folderId      Int    @id @default(autoincrement())
   folderName    String
-  userId        Int
+  userId        String
   
   user          User      @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
   vocabularies  Vocabulary[]
 }
 
 model Vocabulary {
-  vocabularyId    String    @id @default(uuid())
+  vocabularyId    Int    @id @default(autoincrement())
   vocabularyName  String
-  folderId        String
+  folderId        Int
 
   folder          Folder    @relation(fields: [folderId], references: [folderId], onDelete: Cascade, onUpdate: Cascade)
   words           Word[]
 }
 
 model Word {
-  wordId          String          @id @default(uuid())
+  wordId          Int          @id @default(autoincrement())
   word            String
   meaning         String
-  vocabularyId    String
+  vocabularyId    Int
 
   vocabulary      Vocabulary      @relation(fields: [vocabularyId], references: [vocabularyId], onDelete: Cascade, onUpdate: Cascade)
 }

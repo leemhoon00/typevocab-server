@@ -24,7 +24,7 @@ export class VocabulariesService {
     return result;
   }
 
-  async delete(vocabularyId: string) {
+  async delete(vocabularyId: number) {
     await this.vocabulariesRepository.delete(vocabularyId);
     return;
   }

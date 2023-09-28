@@ -17,7 +17,7 @@ export class FoldersRepository {
     });
   }
 
-  async delete(folderId: string): Promise<void> {
+  async delete(folderId: number): Promise<void> {
     await this.prisma.folder.delete({ where: { folderId } });
     return;
   }

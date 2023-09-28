@@ -8,7 +8,7 @@ import {
   Query,
   Param,
   Res,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { WordsService } from './words.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -49,14 +49,14 @@ export class WordsController {
   @ApiQuery({
     name: 'vocabularyId',
     description: '단어장 아이디',
-    type: String,
-    example: '5f9e1c1b9d3b9a2b1c3b4d5e',
+    type: Number,
+    example: 11,
   })
   @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(200)
   async findAllByVocabularyId(
-    @Query('vocabularyId', ParseUUIDPipe) vocabularyId: string,
+    @Query('vocabularyId', ParseIntPipe) vocabularyId: number,
   ): Promise<WordDto[]> {
     return await this.wordsService.findAllByVocabularyId(vocabularyId);
   }

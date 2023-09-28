@@ -21,7 +21,7 @@ export class WordsRepository {
     return;
   }
 
-  async findAllByVocabularyId(vocabularyId: string): Promise<WordDto[]> {
+  async findAllByVocabularyId(vocabularyId: number): Promise<WordDto[]> {
     return await this.prisma.word.findMany({
       where: { vocabularyId },
       select: { wordId: true, word: true, meaning: true },

@@ -8,7 +8,7 @@ import {
   Post,
   Get,
   Delete,
-  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -74,16 +74,15 @@ export class FoldersController {
   @ApiOperation({ summary: '폴더 삭제' })
   @ApiParam({
     name: 'folderId',
-    description: '폴더 아이디',
-    type: String,
-    example: '5f2f4b4d6a6d4b4d6a6d4b4d',
+    type: Number,
+    example: 11,
   })
   @ApiResponse({ status: 204, description: '폴더 삭제 성공' })
   @UseGuards(JwtAuthGuard)
   @Delete(':folderId')
   @HttpCode(204)
   async deleteFolder(
-    @Param('folderId', ParseUUIDPipe) folderId: string,
+    @Param('folderId', ParseIntPipe) folderId: number,
   ): Promise<void> {
     return await this.foldersService.delete(folderId);
   }

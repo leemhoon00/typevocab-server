@@ -14,7 +14,7 @@ export class WordsService {
     return this.wordsRepository.create(createWordsDto);
   }
 
-  async findAllByVocabularyId(vocabularyId: string): Promise<WordDto[]> {
+  async findAllByVocabularyId(vocabularyId: number): Promise<WordDto[]> {
     return await this.wordsRepository.findAllByVocabularyId(vocabularyId);
   }
 

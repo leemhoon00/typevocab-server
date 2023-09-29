@@ -18,23 +18,10 @@ export class FoldersService {
   async findAllFoldersAndVocabulariesByUserId(
     userId: string,
   ): Promise<FolderAndVocabulariesDto[]> {
-    // const folders = await this.foldersRepository.findAllByUserId(userId);
-    // const data = await Promise.all(
-    //   folders.map(async (folder) => {
-    //     const vocabularies =
-    //       await this.vocabulariesRepository.findAllbyFolderId(folder.folderId);
-    //     return {
-    //       folderId: folder.folderId,
-    //       folderName: folder.folderName,
-    //       vocabularies,
-    //     };
-    //   }),
-    // );
-    // return data;
     return this.foldersRepository.findAllFoldersAndVocabulariesByUserId(userId);
   }
 
-  async delete(folderId: string): Promise<void> {
+  async delete(folderId: number): Promise<void> {
     await this.foldersRepository.delete(folderId);
     return;
   }

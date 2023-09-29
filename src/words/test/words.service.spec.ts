@@ -46,7 +46,7 @@ describe('WordsService', () => {
         { word: 'banana', meaning: '바나나' },
       ],
     };
-    it('should call the create method of the WordsRepository', async () => {
+    it('wordsRepository.create() 실행 유무', async () => {
       await wordsService.create(createWordsDtoMock);
 
       expect(wordsRepository.create).toHaveBeenCalledWith(createWordsDtoMock);
@@ -54,7 +54,7 @@ describe('WordsService', () => {
   });
 
   describe('findAllByVocabularyId', () => {
-    it('should call the findAllByVocabularyId method of the WordsRepository', async () => {
+    it('wordsRepository.findAllByVocabularyId() 실행 유무', async () => {
       const vocabularyId = 1;
       const expectedWordDtos: WordDto[] = [
         { wordId: 1, word: 'apple', meaning: '사과' },
@@ -76,7 +76,7 @@ describe('WordsService', () => {
 
   describe('speech', () => {
     const word = 'hello';
-    it('should call the send method of the PollyClient', async () => {
+    it('pollyClient.send() 인자에 Text가 잘 들어가는지 테스트', async () => {
       await wordsService.speech(word);
 
       expect(pollyClient.send).toHaveBeenCalledWith(

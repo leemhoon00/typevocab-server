@@ -24,7 +24,7 @@ export class VocabulariesService {
     return result;
   }
 
-  async delete(vocabularyId: number) {
+  async delete(vocabularyId: number): Promise<void> {
     await this.vocabulariesRepository.delete(vocabularyId);
     return;
   }

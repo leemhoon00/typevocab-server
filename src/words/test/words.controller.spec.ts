@@ -38,7 +38,7 @@ describe('WordsController', () => {
         { word: 'banana', meaning: '바나나' },
       ],
     };
-    it('should call the create method of the WordsService', async () => {
+    it('wordsService.create() 실행 유무', async () => {
       await wordsController.create(createWordsDtoMock);
 
       expect(wordsService.create).toHaveBeenCalledWith(createWordsDtoMock);
@@ -46,7 +46,7 @@ describe('WordsController', () => {
   });
 
   describe('findAllByVocabularyId', () => {
-    it('should call the findAllByVocabularyId method of the WordsService', async () => {
+    it('wordsService.findAllByVocaularyId() 실행 유무', async () => {
       const vocabularyId = 1;
       const expectedWordDtos: WordDto[] = [
         { wordId: 1, word: 'apple', meaning: '사과' },
@@ -72,7 +72,7 @@ describe('WordsController', () => {
       setHeader: jest.fn(),
       send: jest.fn(),
     } as any;
-    it('should call the speech method of the WordsService', async () => {
+    it('wordsService.speech() 실행유무, response Header 검사', async () => {
       await wordsController.speech(word, res);
 
       expect(res.setHeader).toHaveBeenCalledWith(

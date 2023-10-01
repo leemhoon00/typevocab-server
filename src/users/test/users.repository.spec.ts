@@ -8,9 +8,7 @@ describe('UsersRepository', () => {
   let prisma: PrismaService;
   let usersRepository: UsersRepository;
 
-  const userId = 'seedUser';
-
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [UsersRepository, PrismaService],
     }).compile();
@@ -18,19 +16,18 @@ describe('UsersRepository', () => {
     prisma = module.get<PrismaService>(PrismaService);
     usersRepository = module.get<UsersRepository>(UsersRepository);
 
-    await prisma.user.deleteMany();
-    await prisma.user.create({ data: { userId } });
-    await prisma.folder.create({ data: { userId, folderName: 'folder1' } });
+    await prisma.seed();
+  });
+
+  afterEach(async () => {
+    await prisma.seed();
   });
 
   describe('create', () => {
-    it('유저 생성', async () => {
+    it('유저 생성 성공', async () => {
       const userId = '1234';
-      const user = { userId } as User;
-      await usersRepository.create(userId);
-      expect(
-        (await prisma.user.findUnique({ where: { userId } })).userId,
-      ).toEqual(user.userId);
+      const user = await usersRepository.create(userId);
+      expect(user.userId).toEqual(userId);
     });
   });
 });

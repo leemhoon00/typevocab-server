@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersRepository } from 'src/users/users.repository';
 import { Payload } from './auth.interface';
 import { UserDto } from 'src/users/users.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,9 @@ export class AuthService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async getJWT(userId: string) {
+  async getJWT(
+    userId: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.kakaoValidateUser(userId);
     const accessToken = this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
@@ -46,7 +48,7 @@ export class AuthService {
       expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN'),
     });
 
-    const currentRefreshToken = await bcrypt.hash(refreshToken, 10);
+    const currentRefreshToken = bcrypt.hashSync(refreshToken, 10);
 
     await this.usersRepository.setCurrentRefreshToken(
       payload.userId,
@@ -66,7 +68,7 @@ export class AuthService {
       const user =
         await this.usersRepository.getUserWithCurrentRefreshToken(userId);
 
-      const isRefreshTokenMatching = await bcrypt.compare(
+      const isRefreshTokenMatching = bcrypt.compareSync(
         refreshToken,
         user.currentRefreshToken,
       );

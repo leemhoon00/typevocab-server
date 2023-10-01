@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,43 +8,39 @@ datasource db {
 }
 
 model User {
-  userId              String    @id
-  name                String    @default("")
-  email               String    @default("")
-  bio                 String    @default("")
-  company             String    @default("")
-  image               String    @default("https://img.leemhoon00.com/default-image.png")
-  like                Boolean   @default(false)
+  name                String   @default("")
+  email               String   @default("")
+  bio                 String   @default("")
+  company             String   @default("")
+  image               String   @default("https://img.leemhoon00.com/default-image.png")
+  like                Boolean  @default(false)
   currentRefreshToken String?
-
+  userId              String   @id
   folders             Folder[]
 
   @@index([like])
 }
 
 model Folder {
-  folderId      Int    @id @default(autoincrement())
-  folderName    String
-  userId        String
-  
-  user          User      @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-  vocabularies  Vocabulary[]
+  folderName   String
+  userId       String
+  folderId     Int          @id @default(autoincrement())
+  user         User         @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  vocabularies Vocabulary[]
 }
 
 model Vocabulary {
-  vocabularyId    Int    @id @default(autoincrement())
-  vocabularyName  String
-  folderId        Int
-
-  folder          Folder    @relation(fields: [folderId], references: [folderId], onDelete: Cascade, onUpdate: Cascade)
-  words           Word[]
+  vocabularyName String
+  vocabularyId   Int    @id @default(autoincrement())
+  folderId       Int
+  folder         Folder @relation(fields: [folderId], references: [folderId], onDelete: Cascade)
+  words          Word[]
 }
 
 model Word {
-  wordId          Int          @id @default(autoincrement())
-  word            String
-  meaning         String
-  vocabularyId    Int
-
-  vocabulary      Vocabulary      @relation(fields: [vocabularyId], references: [vocabularyId], onDelete: Cascade, onUpdate: Cascade)
+  word         String
+  meaning      String
+  wordId       Int        @id @default(autoincrement())
+  vocabularyId Int
+  vocabulary   Vocabulary @relation(fields: [vocabularyId], references: [vocabularyId], onDelete: Cascade)
 }

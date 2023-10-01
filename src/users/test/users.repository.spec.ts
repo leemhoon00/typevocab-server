@@ -3,7 +3,7 @@ import { UsersRepository } from '../users.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
 
-describe('UsersRepository', () => {
+describe('users.repository', () => {
   let prisma: PrismaService;
   let usersRepository: UsersRepository;
 

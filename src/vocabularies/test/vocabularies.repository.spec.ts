@@ -1,104 +1,85 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { VocabulariesRepository } from '../vocabularies.repository';
-import { CreateVocabularyDto } from '../vocabularies.dto';
-import { Word } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
-describe('VocabulariesRepository', () => {
+describe('vocabularies.repository', () => {
+  let prisma: PrismaService;
   let vocabulariesRepository: VocabulariesRepository;
-  let prismaService: PrismaService;
+  const userId = 'vocabulariesRepositoryTestUser';
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        VocabulariesRepository,
-        {
-          provide: PrismaService,
-          useValue: {
-            vocabulary: {
-              create: jest.fn(),
-              delete: jest.fn(),
-            },
-            word: {
-              findMany: jest.fn().mockResolvedValue([
-                {
-                  wordId: 1,
-                  vocabularyId: 1,
-                  word: 'apple',
-                  meaning: '사과',
-                },
-                {
-                  wordId: 2,
-                  vocabularyId: 2,
-                  word: 'banana',
-                  meaning: '바나나',
-                },
-              ]),
-            },
-          },
-        },
-      ],
+      providers: [VocabulariesRepository, PrismaService],
     }).compile();
 
+    prisma = module.get<PrismaService>(PrismaService);
     vocabulariesRepository = module.get<VocabulariesRepository>(
       VocabulariesRepository,
     );
-    prismaService = module.get<PrismaService>(PrismaService);
   });
 
-  afterEach(() => {
-    jest.resetAllMocks();
+  beforeEach(async () => {
+    await prisma.init(userId);
   });
 
-  describe('create', () => {
-    const createVocabularyDtoMock: CreateVocabularyDto = {
-      folderId: 1,
-      vocabularyName: 'Day-1',
-    };
-    it('should call the create method of the PrismaService', async () => {
-      await vocabulariesRepository.create(createVocabularyDtoMock);
-
-      expect(prismaService.vocabulary.create).toHaveBeenCalledWith({
-        data: createVocabularyDtoMock,
-      });
-    });
+  afterEach(async () => {
+    await prisma.reset(userId);
   });
 
   describe('delete', () => {
-    const vocabularyIdMock = 1;
-    it('should call the delete method of the PrismaService', async () => {
-      await vocabulariesRepository.delete(vocabularyIdMock);
-
-      expect(prismaService.vocabulary.delete).toHaveBeenCalledWith({
-        where: { vocabularyId: vocabularyIdMock },
+    it('vocabulary와 관련된 word가 다 삭제되어야 한다.', async () => {
+      const folder = await prisma.folder.findFirst({ where: { userId } });
+      const vocabulary = await prisma.vocabulary.findFirst({
+        where: { folderId: folder.folderId },
       });
+      // 삭제
+      await vocabulariesRepository.delete(vocabulary.vocabularyId);
+      const deletedWords = await prisma.word.findMany({
+        where: { vocabularyId: vocabulary.vocabularyId },
+      });
+
+      // 삭제 후 정보 수집
+      const deletedVocabulary = await prisma.vocabulary.findUnique({
+        where: { vocabularyId: vocabulary.vocabularyId },
+      });
+
+      expect(deletedVocabulary).toBeNull();
+      expect(deletedWords.length).toBe(0);
     });
   });
 
   describe('createProblems', () => {
-    const vocabularyIdsMock = [1, 2];
-    const wordsMock: Word[] = [
-      {
-        wordId: 1,
-        vocabularyId: 1,
-        word: 'apple',
-        meaning: '사과',
-      },
-      {
-        wordId: 2,
-        vocabularyId: 2,
-        word: 'banana',
-        meaning: '바나나',
-      },
-    ];
-    it('should call the findMany method of the PrismaService', async () => {
-      const result =
-        await vocabulariesRepository.createProblems(vocabularyIdsMock);
+    it('vocabularyIds에 해당하는 word들을 배열형태로 한번에 가져온다', async () => {
+      const folder = await prisma.folder.findFirst({ where: { userId } });
 
-      expect(prismaService.word.findMany).toHaveBeenCalledWith({
-        where: { vocabularyId: { in: vocabularyIdsMock } },
+      const vocabulary = await prisma.vocabulary.create({
+        data: {
+          folderId: folder.folderId,
+          vocabularyName: 'voca2',
+        },
       });
-      expect(result).toEqual(wordsMock);
+      await prisma.word.createMany({
+        data: [
+          {
+            vocabularyId: vocabulary.vocabularyId,
+            word: 'monster',
+            meaning: '괴물',
+          },
+          {
+            vocabularyId: vocabulary.vocabularyId,
+            word: 'computer',
+            meaning: '컴퓨터',
+          },
+        ],
+      });
+      const vocabularyIds = await prisma.vocabulary
+        .findMany({
+          where: { folderId: folder.folderId },
+          select: { vocabularyId: true },
+        })
+        .then((v) => v.map((v) => v.vocabularyId));
+      const result = await vocabulariesRepository.createProblems(vocabularyIds);
+      expect(result.length).toBe(4);
     });
   });
 });

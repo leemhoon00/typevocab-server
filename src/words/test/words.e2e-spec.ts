@@ -13,11 +13,11 @@ import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 describe('WordsController (e2e)', () => {
+  const userId = 'words-e2e-spec-user-id';
   let app: INestApplication;
   let jwtService: JwtService;
   let accessToken: string;
   let prisma: PrismaService;
-  const userId = 'words-e2e-spec-user-id';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -43,13 +43,13 @@ describe('WordsController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    jwtService = moduleFixture.get<JwtService>(JwtService);
-    prisma = moduleFixture.get<PrismaService>(PrismaService);
     app.use(cookieParser());
     await app.init();
 
-    const payload = { userId };
-    accessToken = jwtService.sign(payload);
+    jwtService = moduleFixture.get<JwtService>(JwtService);
+    prisma = moduleFixture.get<PrismaService>(PrismaService);
+
+    accessToken = jwtService.sign({ userId });
   });
 
   afterAll(async () => {
@@ -64,7 +64,7 @@ describe('WordsController (e2e)', () => {
     await prisma.reset(userId);
   });
 
-  it('/words (POST) - 단어장에 단어생성', async () => {
+  it('POST /words - 단어장에 단어생성', async () => {
     const folder = await prisma.folder.findFirst({ where: { userId } });
     const vocabulary = await prisma.vocabulary.findFirst({
       where: { folderId: folder.folderId },
@@ -98,7 +98,7 @@ describe('WordsController (e2e)', () => {
     expect(words.length).toBe(3);
   });
 
-  it('/words (GET) - 단어장에 있는 단어조회', async () => {
+  it('GET /words - 단어장에 있는 단어조회', async () => {
     const folder = await prisma.folder.findFirst({ where: { userId } });
     const vocabulary = await prisma.vocabulary.findFirst({
       where: { folderId: folder.folderId },
@@ -112,7 +112,7 @@ describe('WordsController (e2e)', () => {
     expect(result.body.length).toBe(2);
   });
 
-  it('/words/:word (GET) - 단어 발음', async () => {
+  it('GET /words/:word - 단어 발음', async () => {
     await request(app.getHttpServer())
       .get(`/words/apple`)
       .set('Cookie', `accessToken=${accessToken}`)

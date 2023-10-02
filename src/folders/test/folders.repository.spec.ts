@@ -49,8 +49,8 @@ describe('folders.repository', () => {
       });
 
       expect(deletedFolder).toBeNull();
-      expect(deletedVocabularies).toEqual([]);
-      expect(deletedWords).toEqual([]);
+      expect(deletedVocabularies).toHaveLength(0);
+      expect(deletedWords).toHaveLength(0);
     });
   });
 });

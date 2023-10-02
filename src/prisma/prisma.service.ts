@@ -7,13 +7,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     await this.$connect();
   }
 
-  async seed() {
-    if (process.env.NODE_ENV === 'production') return;
-
-    const userId = 'seedUser';
-
-    await this.user.deleteMany();
-    await this.$queryRaw`TRUNCATE TABLE "Folder" RESTART IDENTITY CASCADE;`;
+  async init(userId: string) {
     const user = await this.user.create({ data: { userId } });
     const folder = await this.folder.create({
       data: { userId: user.userId, folderName: 'folder1' },
@@ -35,5 +29,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       ],
     });
+  }
+
+  async reset(userId: string) {
+    const user = await this.user.findUnique({ where: { userId } });
+    if (user) await this.user.delete({ where: { userId } });
   }
 }

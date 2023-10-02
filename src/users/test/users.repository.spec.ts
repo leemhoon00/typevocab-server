@@ -6,6 +6,7 @@ import { User } from '@prisma/client';
 describe('users.repository', () => {
   let prisma: PrismaService;
   let usersRepository: UsersRepository;
+  const userId = 'userRepositoryTestUser';
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,7 +18,11 @@ describe('users.repository', () => {
   });
 
   beforeEach(async () => {
-    await prisma.seed();
+    await prisma.init(userId);
+  });
+
+  afterEach(async () => {
+    await prisma.reset(userId);
   });
 
   describe('create', () => {
@@ -36,19 +41,18 @@ describe('users.repository', () => {
       await usersRepository.create(userId);
       const user = await prisma.user.findUnique({ where: { userId } });
       expect(user).toEqual(toBeUser);
+      await prisma.user.delete({ where: { userId } });
     });
   });
 
   describe('getUser', () => {
     it('currentRefreshToken이 없어야 한다.', async () => {
-      const userId = 'seedUser';
       const user = (await usersRepository.getUser(userId)) as any;
-      expect(user.currentRefreshToken).toBeUndefined();
+      expect(user).not.toHaveProperty('currentRefreshToken');
     });
   });
 
   describe('deleteUser', () => {
-    const userId = 'seedUser';
     it('유저와 관련된 folder, vocabulary, word가 다 삭제되어야 한다.', async () => {
       // 기존 정보 수집
       const folders = await prisma.folder.findMany({

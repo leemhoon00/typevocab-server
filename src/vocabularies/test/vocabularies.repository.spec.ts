@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 describe('vocabularies.repository', () => {
   let prisma: PrismaService;
   let vocabulariesRepository: VocabulariesRepository;
+  const userId = 'vocabulariesRepositoryTestUser';
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,21 +19,28 @@ describe('vocabularies.repository', () => {
   });
 
   beforeEach(async () => {
-    await prisma.seed();
+    await prisma.init(userId);
+  });
+
+  afterEach(async () => {
+    await prisma.reset(userId);
   });
 
   describe('delete', () => {
-    const vocabularyId = 1;
     it('vocabulary와 관련된 word가 다 삭제되어야 한다.', async () => {
+      const folder = await prisma.folder.findFirst({ where: { userId } });
+      const vocabulary = await prisma.vocabulary.findFirst({
+        where: { folderId: folder.folderId },
+      });
       // 삭제
-      await vocabulariesRepository.delete(vocabularyId);
+      await vocabulariesRepository.delete(vocabulary.vocabularyId);
       const deletedWords = await prisma.word.findMany({
-        where: { vocabularyId },
+        where: { vocabularyId: vocabulary.vocabularyId },
       });
 
       // 삭제 후 정보 수집
       const deletedVocabulary = await prisma.vocabulary.findUnique({
-        where: { vocabularyId },
+        where: { vocabularyId: vocabulary.vocabularyId },
       });
 
       expect(deletedVocabulary).toBeNull();
@@ -42,19 +50,34 @@ describe('vocabularies.repository', () => {
 
   describe('createProblems', () => {
     it('vocabularyIds에 해당하는 word들을 배열형태로 한번에 가져온다', async () => {
-      const vocabularyIds = [1, 2];
-      await prisma.vocabulary.create({
+      const folder = await prisma.folder.findFirst({ where: { userId } });
+
+      const vocabulary = await prisma.vocabulary.create({
         data: {
-          folderId: 1,
+          folderId: folder.folderId,
           vocabularyName: 'voca2',
         },
       });
       await prisma.word.createMany({
         data: [
-          { vocabularyId: 2, word: 'monster', meaning: '괴물' },
-          { vocabularyId: 2, word: 'computer', meaning: '컴퓨터' },
+          {
+            vocabularyId: vocabulary.vocabularyId,
+            word: 'monster',
+            meaning: '괴물',
+          },
+          {
+            vocabularyId: vocabulary.vocabularyId,
+            word: 'computer',
+            meaning: '컴퓨터',
+          },
         ],
       });
+      const vocabularyIds = await prisma.vocabulary
+        .findMany({
+          where: { folderId: folder.folderId },
+          select: { vocabularyId: true },
+        })
+        .then((v) => v.map((v) => v.vocabularyId));
       const result = await vocabulariesRepository.createProblems(vocabularyIds);
       expect(result.length).toBe(4);
     });

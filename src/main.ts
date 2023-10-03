@@ -6,9 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'debug', 'verbose', 'log'],
-  });
+  const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const client_url = configService.get<string>('CLIENT_URL');
   app.enableCors({

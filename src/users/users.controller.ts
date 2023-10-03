@@ -58,7 +58,7 @@ export class UsersController {
   async updateUserInfo(
     @Req() req: Request,
     @Body() updateUserInfoDto: UpdateUserInfoDto,
-  ) {
+  ): Promise<void> {
     await this.usersService.updateUserInfo(req.user.userId, updateUserInfoDto);
     return;
   }

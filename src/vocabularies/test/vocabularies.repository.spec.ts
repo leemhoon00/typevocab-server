@@ -55,7 +55,7 @@ describe('vocabularies.repository', () => {
       const vocabulary = await prisma.vocabulary.create({
         data: {
           folderId: folder.folderId,
-          vocabularyName: 'voca2',
+          vocabularyName: 'voca3',
         },
       });
       await prisma.word.createMany({
@@ -79,7 +79,7 @@ describe('vocabularies.repository', () => {
         })
         .then((v) => v.map((v) => v.vocabularyId));
       const result = await vocabulariesRepository.createProblems(vocabularyIds);
-      expect(result.length).toBe(4);
+      expect(result.length).toBe(6);
     });
   });
 });

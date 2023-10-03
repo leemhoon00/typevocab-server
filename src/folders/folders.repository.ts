@@ -32,7 +32,11 @@ export class FoldersRepository {
   ): Promise<FolderAndVocabulariesDto[]> {
     return await this.prisma.folder.findMany({
       where: { userId },
-      include: { vocabularies: true },
+      select: {
+        folderId: true,
+        folderName: true,
+        vocabularies: true,
+      },
     });
   }
 }

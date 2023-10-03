@@ -29,6 +29,23 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       ],
     });
+    const vocabulary2 = await this.vocabulary.create({
+      data: { folderId: folder.folderId, vocabularyName: 'voca2' },
+    });
+    await this.word.createMany({
+      data: [
+        {
+          vocabularyId: vocabulary2.vocabularyId,
+          word: 'computer',
+          meaning: '컴퓨터',
+        },
+        {
+          vocabularyId: vocabulary2.vocabularyId,
+          word: 'monster',
+          meaning: '괴물',
+        },
+      ],
+    });
   }
 
   async reset(userId: string) {

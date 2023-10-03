@@ -32,10 +32,7 @@ describe('VocabulariesController (e2e)', () => {
           }),
           inject: [ConfigService],
         }),
-        ConfigModule.forRoot({
-          isGlobal: true,
-          expandVariables: true,
-        }),
+        ConfigModule,
       ],
       controllers: [VocabulariesController],
       providers: [VocabulariesService, VocabulariesRepository, JwtStrategy],

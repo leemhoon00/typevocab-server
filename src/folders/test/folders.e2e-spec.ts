@@ -1,22 +1,22 @@
+import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { Test, TestingModule } from '@nestjs/testing';
-import * as cookieParser from 'cookie-parser';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as request from 'supertest';
 import { FoldersController } from '../folders.controller';
 import { FoldersRepository } from '../folders.repository';
 import { FoldersService } from '../folders.service';
+import * as cookieParser from 'cookie-parser';
+import * as request from 'supertest';
 
 describe('FoldersController (e2e)', () => {
   const userId = 'folders-e2e-spec-user-id';
   let app: INestApplication;
   let jwtService: JwtService;
-  let accessToken: string;
   let prisma: PrismaService;
+  let accessToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -32,10 +32,7 @@ describe('FoldersController (e2e)', () => {
           }),
           inject: [ConfigService],
         }),
-        ConfigModule.forRoot({
-          isGlobal: true,
-          expandVariables: true,
-        }),
+        ConfigModule,
       ],
       controllers: [FoldersController],
       providers: [FoldersService, FoldersRepository, JwtStrategy],

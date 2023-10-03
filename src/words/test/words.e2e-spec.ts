@@ -33,10 +33,7 @@ describe('WordsController (e2e)', () => {
           }),
           inject: [ConfigService],
         }),
-        ConfigModule.forRoot({
-          isGlobal: true,
-          expandVariables: true,
-        }),
+        ConfigModule,
       ],
       controllers: [WordsController],
       providers: [PollyClient, WordsService, WordsRepository, JwtStrategy],

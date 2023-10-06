@@ -17,6 +17,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: typevocab
+        with:
+          args: postgres -c 'max_connections=300'
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1

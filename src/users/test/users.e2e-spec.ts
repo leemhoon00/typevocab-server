@@ -176,7 +176,7 @@ describe('UsersController (e2e)', () => {
     await request(app.getHttpServer())
       .post('/users/likes')
       .set('Cookie', `accessToken=${accessToken}`)
-      .expect(202);
+      .expect(201);
 
     const user = await prisma.user.findUnique({ where: { userId } });
     expect(user.like).toBe(true);

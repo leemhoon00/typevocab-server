@@ -1,0 +1,47 @@
+name: Test
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start PostgreSQL
+        run: |
+          docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=typevocab postgres:13.3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{secrets.AWS_ACCOUNT_ID}}:role/${{secrets.AWS_ROLE_NAME}}
+          role-session-name: github-actions
+          aws-region: ap-northeast-2
+
+      - name: Install dependencies
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/typevocab
+        run: |
+          npm install
+          npx prisma db push
+          npx prisma generate
+
+      - name: Run tests
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/typevocab
+        run: |
+          npm run test
+
+      - name: Merge to main
+        if: ${{ success() && github.event_name == 'pull_request' && github.actor == 'leemhoon00' }}
+        uses: hmarr/auto-approve-action@v3

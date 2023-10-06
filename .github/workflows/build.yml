@@ -1,0 +1,32 @@
+name: Build and Deploy
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{secrets.AWS_ACCOUNT_ID}}:role/${{secrets.AWS_ROLE_NAME}}
+          role-session-name: github-actions
+          aws-region: ap-northeast-2
+
+      - name: Build
+        run: |
+          docker image build --build-arg DATABASE_URL=${{secrets.DATABASE_URL}} -t ${{secrets.IMAGE_TAG}} .
+
+      - name: Deploy
+        run: |
+          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.ap-northeast-2.amazonaws.com
+          docker push ${{secrets.IMAGE_TAG}}

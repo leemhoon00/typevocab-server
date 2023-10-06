@@ -19,6 +19,7 @@ describe('UsersController (e2e)', () => {
   let jwtService: JwtService;
   let prisma: PrismaService;
   let accessToken: string;
+  let usersService: UsersService;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -55,6 +56,7 @@ describe('UsersController (e2e)', () => {
 
     jwtService = moduleFixture.get<JwtService>(JwtService);
     prisma = moduleFixture.get<PrismaService>(PrismaService);
+    usersService = moduleFixture.get<UsersService>(UsersService);
 
     accessToken = jwtService.sign({ userId });
   });
@@ -122,6 +124,7 @@ describe('UsersController (e2e)', () => {
 
   describe('DELETE /users - 유저 탈퇴하기', () => {
     it('유저와 관련된 폴더, 단어장, 단어들이 모두 삭제된다', async () => {
+      jest.spyOn(usersService, 'deleteS3Image').mockResolvedValue();
       const folders = await prisma.folder.findMany({ where: { userId } });
       const vocabularies = await prisma.vocabulary.findMany({
         where: { folderId: { in: folders.map((folder) => folder.folderId) } },

@@ -41,9 +41,27 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.getJWT(
       req.user.userId,
     );
-    res.cookie('accessToken', accessToken, { httpOnly: true });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true });
-    res.cookie('isLoggedIn', true, { httpOnly: false });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      domain: this.configService.get('COOKIE_DOMAIN'),
+    });
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      domain: this.configService.get('COOKIE_DOMAIN'),
+    });
+    res.cookie('isLoggedIn', true, {
+      httpOnly: false,
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      domain: this.configService.get('COOKIE_DOMAIN'),
+    });
     return res.redirect(this.configService.get('CLIENT_URL'));
   }
 
@@ -69,6 +87,10 @@ export class AuthController {
       );
       res.cookie('accessToken', newAccessToken, {
         httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+        path: '/',
+        domain: this.configService.get('COOKIE_DOMAIN'),
       });
       return res.send();
     } catch (err) {

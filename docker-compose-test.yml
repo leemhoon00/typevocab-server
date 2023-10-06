@@ -7,10 +7,24 @@ services:
       POSTGRES_DB: typevocab
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - '5432:5432'
-    volumes:
-      - typevocab:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -q -d typevocab -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-volumes:
-  typevocab:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+
+    environment:
+      - JWT_SECRET=secret
+      - JWT_EXPIRES_IN=1d
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/typevocab
+
+    volumes:
+      - ~/.aws:/root/.aws
+    depends_on:
+      db:
+        condition: service_healthy

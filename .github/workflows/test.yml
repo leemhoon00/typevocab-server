@@ -45,6 +45,3 @@ jobs:
       - name: Merge to main
         if: ${{ success() && github.event_name == 'pull_request' && github.actor == 'leemhoon00' }}
         uses: hmarr/auto-approve-action@v3
-        with:
-          github-token: ${{ secrets.TOKEN }}
-          pull-request-merge: true

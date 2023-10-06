@@ -1,19 +1,29 @@
-FROM --platform=linux/amd64 node
+FROM --platform=linux/amd64 node as build
 
-# Create app directory
+RUN mkdir /app
+WORKDIR /app
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 
-# Install app dependencies
-COPY . /usr/src/app
+COPY . /app
 RUN npm install
-
-# Expose port
-EXPOSE 3000
-
 RUN npx prisma generate
 RUN npm run build
+RUN rm -rf node_modules
+RUN npm install --production
 
-# Run app
-CMD ["npm", "run" ,"start:dev"]
+# Path: Dockerfile
+FROM --platform=linux/amd64 node as production
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY --from=build /app/package.json /app/package.json
+COPY --from=build /app/dist /app/dist
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/prisma /app/prisma
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start:prod"]

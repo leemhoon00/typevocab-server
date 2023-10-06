@@ -42,12 +42,6 @@ jobs:
         run: |
           npm run test
 
-      # - name: Merge to main
-      #   if: ${{ success() && github.event_name == 'pull_request' && github.actor == 'leemhoon00' }}
-      #   uses: hmarr/auto-approve-action@v3
-
-      - name: Merge Request
+      - name: Merge to main
         if: ${{ success() && github.event_name == 'pull_request' && github.actor == 'leemhoon00' }}
-        uses: reitermarkus/automerge@v2
-        with:
-          token: ${{ secrets.TOKEN }}
+        uses: hmarr/auto-approve-action@v3

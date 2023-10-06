@@ -18,7 +18,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: typevocab
         with:
-          args: postgres
+          args: postgres -D /var/lib/postgresql/data
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1

@@ -14,7 +14,7 @@ jobs:
       - name: Start Postgres
         uses: docker://postgres:13.1
         with:
-          args: -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=typevocab
+          args: -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=typevocab -p 5432:5432
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1

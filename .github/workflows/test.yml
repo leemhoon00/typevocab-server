@@ -43,8 +43,8 @@ jobs:
           npm run test
 
       - name: Merge to main
-        if: ${{ success() && github.event_name == 'pull_request' }}
-        uses: repo-sync/pull-request@v2
+        if: ${{ success() && github.event_name == 'pull_request' && github.actor == 'leemhoon00' }}
+        uses: hmarr/auto-approve-action@v3
         with:
-          destination_branch: main
-          github_token: ${{ secrets.TOKEN }}
+          github-token: ${{ secrets.TOKEN }}
+          pull-request-merge: true

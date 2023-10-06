@@ -39,6 +39,7 @@ jobs:
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/typevocab
         run: |
           if ! npm test; then
             echo "Tests failed"

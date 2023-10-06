@@ -11,10 +11,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Start Postgres
-        uses: docker://postgres:13.1
-        with:
-          args: -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=typevocab -p 5432:5432
+      - name: Start PostgreSQL
+        uses: docker://postgres:13.3
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: typevocab
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1

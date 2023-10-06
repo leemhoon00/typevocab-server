@@ -13,7 +13,7 @@ export class AppController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('test')
+  @Get('temp')
   async testFunction() {
     console.log('test');
     return 'ddd';

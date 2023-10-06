@@ -12,13 +12,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Start PostgreSQL
-        uses: docker://postgres:13.3
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: typevocab
-        with:
-          args: postgres -D /var/lib/postgresql/data
+        run: |
+          docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=typevocab postgres:13.3
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1

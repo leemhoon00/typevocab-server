@@ -1,6 +1,7 @@
 # Typevocab
 - [소개링크](https://typevocab.leemhoon00.com) (서버를 꺼놔서 로그인, 실사용은 불가능합니다!)
 - [프론트 소스코드](https://github.com/leemhoon00/typevocab-client)
+- 개발 기간: 23.08.22 ~ 23.10.07
 
   <br>
 

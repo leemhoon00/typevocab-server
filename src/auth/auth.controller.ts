@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { Request, Response } from 'express';
+import { Request, Response, CookieOptions } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
@@ -20,6 +20,13 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
   ) {}
+  cookieOptions: CookieOptions = {
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true,
+    path: '/',
+    domain: this.configService.get('COOKIE_DOMAIN'),
+  };
 
   @ApiOperation({ summary: '카카오 로그인' })
   @ApiResponse({
@@ -41,20 +48,8 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.getJWT(
       req.user.userId,
     );
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      path: '/',
-      domain: this.configService.get('COOKIE_DOMAIN'),
-    });
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      path: '/',
-      domain: this.configService.get('COOKIE_DOMAIN'),
-    });
+    res.cookie('accessToken', accessToken, this.cookieOptions);
+    res.cookie('refreshToken', refreshToken, this.cookieOptions);
     res.cookie('isLoggedIn', true, {
       httpOnly: false,
       sameSite: 'none',
@@ -85,18 +80,18 @@ export class AuthController {
       const newAccessToken = await this.authService.refresh(
         req.cookies?.refreshToken,
       );
-      res.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
+      res.cookie('accessToken', newAccessToken, this.cookieOptions);
+      return res.send();
+    } catch (err) {
+      res.clearCookie('accessToken', this.cookieOptions);
+      res.clearCookie('refreshToken', this.cookieOptions);
+      res.clearCookie('isLoggedIn', {
+        httpOnly: false,
         sameSite: 'none',
         secure: true,
         path: '/',
         domain: this.configService.get('COOKIE_DOMAIN'),
       });
-      return res.send();
-    } catch (err) {
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
-      res.clearCookie('isLoggedIn');
       throw new UnauthorizedException();
     }
   }
@@ -107,9 +102,15 @@ export class AuthController {
   @Get('logout')
   @HttpCode(301)
   async logout(@Req() req: Request, @Res() res: Response) {
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    res.clearCookie('isLoggedIn');
+    res.clearCookie('accessToken', this.cookieOptions);
+    res.clearCookie('refreshToken', this.cookieOptions);
+    res.clearCookie('isLoggedIn', {
+      httpOnly: false,
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      domain: this.configService.get('COOKIE_DOMAIN'),
+    });
     await this.authService.logout(req.user.userId);
     return res.redirect(this.configService.get('CLIENT_URL'));
   }

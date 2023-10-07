@@ -14,10 +14,7 @@ RUN rm -rf node_modules
 RUN npm install --production
 
 # Path: Dockerfile
-FROM --platform=linux/amd64 ubuntu
-
-RUN apt-get update && apt-get install -y
-RUN apt-get install nodejs -y
+FROM --platform=linux/amd64 node as production
 
 RUN mkdir /app
 WORKDIR /app

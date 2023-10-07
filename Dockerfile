@@ -16,8 +16,6 @@ RUN npm install --production
 # Path: Dockerfile
 FROM --platform=linux/amd64 node:alpine
 
-RUN apk add --no-cache nodejs
-
 RUN mkdir /app
 WORKDIR /app
 

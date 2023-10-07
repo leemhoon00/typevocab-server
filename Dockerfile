@@ -14,7 +14,7 @@ RUN rm -rf node_modules
 RUN npm install --production
 
 # Path: Dockerfile
-FROM alpine:latest as production
+FROM --platform=linux/amd64 alpine:latest as production
 
 RUN apk add --no-cache nodejs
 

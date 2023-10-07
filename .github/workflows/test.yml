@@ -42,12 +42,6 @@ jobs:
         run: |
           npm run test
 
-      - name: Approve PR
+      - name: Merge to main
         if: ${{ success() && github.event_name == 'pull_request' && github.actor == 'leemhoon00' }}
         uses: hmarr/auto-approve-action@v3
-
-      - name: Merge to Main
-        if: ${{ success() && github.event_name == 'pull_request' && github.actor == 'leemhoon00' }}
-        uses: pascalgn/automerge-action@v0.15.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}

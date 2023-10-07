@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node as build
+FROM --platform=linux/amd64 node:18-alpine3.16 as build
 
 RUN mkdir /app
 WORKDIR /app

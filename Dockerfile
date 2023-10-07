@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:18-alpine3.16 as build
+FROM --platform=linux/amd64 node as build
 
 RUN mkdir /app
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN rm -rf node_modules
 RUN npm install --production
 
 # Path: Dockerfile
-FROM --platform=linux/amd64 node:alpine
+FROM --platform=linux/amd64 node:18-alpine3.16
 
 RUN mkdir /app
 WORKDIR /app

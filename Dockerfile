@@ -21,6 +21,7 @@ RUN apk add --no-cache nodejs
 RUN mkdir /app
 WORKDIR /app
 
+COPY --from=build /app/prisma /app/prisma
 COPY --from=build /app/dist /app/dist
 COPY --from=build /app/node_modules /app/node_modules
 

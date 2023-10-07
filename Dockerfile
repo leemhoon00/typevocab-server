@@ -14,7 +14,14 @@ RUN rm -rf node_modules
 RUN npm install --production
 
 # Path: Dockerfile
-FROM --platform=linux/amd64 node:18-alpine3.16
+FROM --platform=linux/amd64 ubuntu:20.04
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get install -y nodejs
 
 RUN mkdir /app
 WORKDIR /app

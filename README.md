@@ -6,7 +6,8 @@
   <br>
 
 ## Architecture
-![architecture](https://github.com/leemhoon00/typevocab-server/assets/57895643/12cbc5d2-8462-42f7-a99f-5044531b3ff8)
+![architecture](https://github.com/leemhoon00/typevocab-server/assets/57895643/42ae3c12-4ab3-49d0-b625-d7ca11db7861)
+
 
 <br>
 

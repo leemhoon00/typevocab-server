@@ -14,8 +14,8 @@
 
 <br>
 
-## 1. Output
-- [시연영상 (youtube)](https://typevocab.leemhoon00.com)
+## 1. Result
+- [시연영상 (youtube)](https://youtu.be/TCNzi9TTY9w)
 - [프론트 소스코드](https://github.com/leemhoon00/typevocab-client)
 - 개발 기간: 23.08.22 ~ 23.10.07
 
